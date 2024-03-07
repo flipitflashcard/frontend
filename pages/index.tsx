@@ -8,7 +8,7 @@ import { Container } from "@mui/material";
 import Login from "@/components/Login";
 
 export default function Home() {
-  const [token, _] = useState<string | undefined>(getCookie('token'));
+  const [token, _] = useState<string | undefined>(getCookie('email'));
 
   return (
     <div>
