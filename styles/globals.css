@@ -9,7 +9,7 @@
 }
 
 .bg-login {
-    background-image: url("../public/Images/LoginBack.jpg");
+    background-image: url("../public/Images/FlipitPattern.svg");
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: cover;
@@ -18,21 +18,20 @@
 }
 
 .design-login {
-    background-color: #e9e6e6;
+    background-color: #AEBED6;
     border-radius: 20px;
-    opacity: 85%;
 }
 
 .main-button {
-    background-color: #e72451;
-    border-radius: 20px;
+    background-color: #133266;
+    border-radius: 15px;
     font-weight: bold;
-    border: 1px solid #e72451;
+    border: 1px solid #133266;
 }
 
 .main-button:hover {
     background-color: #fff;
-    color: #e72451;
+    color: #133266;
 }
 
 .seconde-button {
@@ -57,6 +56,14 @@
     animation: fadeIn 1s ease forwards;
 }
 
+.animation-show-login {
+    animation: kf_scale 3s infinite;
+}
+
+.hover-text:hover {
+    color: #133266 !important;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -64,5 +71,19 @@
 
     to {
         opacity: 1;
+    }
+}
+
+@keyframes kf_scale {
+    0% {
+        transform: scale(0) rotateY(360deg);
+    }
+
+    50% {
+        transform: scale(0.5) rotateY(180deg);
+    }
+
+    100% {
+        transform: scale(1) rotateY(0deg);
     }
 }
