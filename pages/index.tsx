@@ -5,7 +5,7 @@ import { getCookie } from "cookies-next";
 import { Container } from "@mui/material";
 
 // import components
-import Login from "@/components/Login";
+import Login from "@/components/LoginProcess/Login";
 
 export default function Home() {
   const [token, _] = useState<string | undefined>(getCookie('email'));
