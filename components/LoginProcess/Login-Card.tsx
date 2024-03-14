@@ -8,15 +8,29 @@ import {
     Button,
     TextField,
     Box,
-    Typography,
-    InputAdornment
+    keyframes,
 } from '@mui/material';
 
-// import icons
-import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
-import PasswordIcon from '@mui/icons-material/Password';
-import ThreeSixtyIcon from '@mui/icons-material/ThreeSixty';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
+// create animation for switch
+const fadeIn = keyframes`
+    0% {
+        transform: scale(0) rotateY(180deg);
+    }
+
+    100% {
+        transform: scale(1) rotateY(0deg);
+    }
+`;
+
+const fadeOut = keyframes`
+    0% {
+        transform: scale(0) rotateY(0deg);
+    }
+
+    100% {
+        transform: scale(1) rotateY(360deg);
+    }
+`;
 
 const Login_Card = () => {
     const router = useRouter();
@@ -25,19 +39,25 @@ const Login_Card = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
 
+    // import state of sign up
+    const [signUpEmail, setSignUpEmail] = useState<string>('');
+
+    // import state og sign up validation 
+    const [signUpEmailError, setSignUpEmailError] = useState<string>('');
+
     // import state of log-in validation 
     const [emailError, setEmailError] = useState<string>('');
     const [passwordError, setPasswordError] = useState<string>('');
 
     // state for animation 
-    const [isRectangleVisible, setRectangleVisible] = useState<boolean>(true);
-    const [isOtherComponentVisible, setOtherComponentVisible] = useState<boolean>(false);
+    const [loginStep, setLoginStep] = useState<boolean>(true);
+
     const isValidEmail = (email: string) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     };
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleLoginSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (email === "" && password === "") {
             setEmailError('Email is required!');
@@ -49,42 +69,45 @@ const Login_Card = () => {
             password.length >= 8 ? setPasswordError('Password should be no longer than 8 characters.') : setPasswordError('');
             setEmailError('Email is required!');
         } else if (email !== "" && password !== "") {
-            !isValidEmail(email) ? setEmailError('Email is invalid!') : setEmailError('');
-            password.length >= 8 ? setPasswordError('Password should be no longer than 8 characters.') : setPasswordError('');
-        } else {
-            setCookie("email", email, {
-                path: "/",
-                domain: 'https://FlipIt.com',
-                // httpOnly: false,
-                sameSite: 'lax',
-            });
-            setCookie("password", password, {
-                path: "/",
-                domain: 'https://FlipIt.com',
-                // httpOnly: false,
-                sameSite: 'lax',
-            });
+
+            if (!isValidEmail(email)) {
+                setEmailError('Email is invalid!');
+            } else if (password.length >= 8) {
+                setPasswordError('Password should be no longer than 8 characters.');
+            } else {
+                setCookie("token", email);
+                router.push('/home');
+            }
+
         }
     };
 
-    const goToLogin = () => {
-        setRectangleVisible(false);
-        setOtherComponentVisible(true);
+    const handleSignUpSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (signUpEmail !== '') {
+            !isValidEmail(signUpEmail) ? setSignUpEmailError('Email is invalid!') : setSignUpEmailError('');
+        } else {
+            setSignUpEmailError('Email is required!');
+        }
+    }
+
+    const handleToggleForm = () => {
+        setLoginStep((prev) => !prev);
     }
 
     return (
-        <div>
+        <Box
+            sx={{
+                marginTop: 3,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                animation: `${loginStep ? fadeIn : fadeOut} 1s ease`
+            }}
+        >
             {
-                isRectangleVisible &&
-                <Box
-                    sx={{
-                        marginTop: 3,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                    }}
-                >
-                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
+                loginStep ? (
+                    <Box component="form" onSubmit={handleLoginSubmit} noValidate sx={{ mt: 3 }}>
                         <TextField
                             value={email}
                             placeholder='FlipIt@gmail.com'
@@ -126,7 +149,6 @@ const Login_Card = () => {
                                 <Button
                                     type="submit"
                                     variant="contained"
-                                    startIcon={<PersonAddIcon />}
                                     className='main-button me-2'
                                     style={{ width: '50%' }}
                                 >
@@ -134,101 +156,52 @@ const Login_Card = () => {
                                 </Button>
                             </Grid>
                         </Grid>
-                        <Grid container className='mt-4'>
-                            <Grid item xs>
-                                <Button sx={{ fontSize: "9pt" }}
-                                    className='text-white fw-bold hover-text'
-                                    onClick={goToLogin}
+                    </Box>
+                ) : (
+                    <Box component="form" onSubmit={handleSignUpSubmit} noValidate sx={{ mt: 3 }}>
+                        <TextField
+                            value={signUpEmail}
+                            placeholder='FlipIt@gmail.com'
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="email"
+                            name="email"
+                            autoComplete="email"
+                            autoFocus
+                            variant="outlined"
+                            style={{ backgroundColor: 'white', borderRadius: '20px' }}
+                            onChange={(e) => setSignUpEmail(e.target.value)}
+                            error={!!signUpEmailError}
+                            helperText={signUpEmailError}
+                            sx={{ border: 'none', "& fieldset": { border: 'none' }, }}
+                        />
+                        <Grid container className='mt-5'>
+                            <Grid item xs className='mt-4'>
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    className='main-button me-2'
+                                    style={{ width: '80%' }}
                                 >
-                                    Register or Forgot Password
+                                    Sign up | Reset
                                 </Button>
                             </Grid>
                         </Grid>
                     </Box>
-                </Box>
+                )
             }
-            {
-                isOtherComponentVisible &&
-                <div className='card.visible'>
-                    <Box
-                        sx={{
-                            marginTop: 3,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                        }}
+            <Grid container className='mt-4'>
+                <Grid item xs>
+                    <Button sx={{ fontSize: "9pt" }}
+                        className='text-white fw-bold hover-text'
+                        onClick={handleToggleForm}
                     >
-                        <Typography component="h1" variant="h5">
-                            Login to FlipIt
-                        </Typography>
-                        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
-                            <TextField
-                                value={email}
-                                placeholder='EnLo@gmail.com'
-                                margin="normal"
-                                required
-                                fullWidth
-                                id="email"
-                                label="Email Address"
-                                name="email"
-                                autoComplete="email"
-                                autoFocus
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <AlternateEmailIcon />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                                variant="standard"
-                                onChange={(e) => setEmail(e.target.value)}
-                            />
-                            <TextField
-                                value={password}
-                                margin="normal"
-                                required
-                                fullWidth
-                                name="password"
-                                label="Password"
-                                type="password"
-                                id="password"
-                                autoComplete="password"
-                                InputProps={{
-                                    className: 'custom-input',
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <PasswordIcon />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                                variant="standard"
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                sx={{ mt: 3, mb: 2 }}
-                                className='main-button'
-                            >
-                                Sign In
-                            </Button>
-                            <Grid container>
-                                <Grid item xs>
-                                    <Button
-                                        className='seconde-button'
-                                        startIcon={<ThreeSixtyIcon />}
-                                        variant="contained"
-                                    >
-                                        Log In
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                        </Box>
-                    </Box>
-                </div>
-            }
-        </div>
+                        {loginStep ? 'Register or Forgot Password' : 'Back to Login'}
+                    </Button>
+                </Grid>
+            </Grid>
+        </Box>
     )
 }
 
