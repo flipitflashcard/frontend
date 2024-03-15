@@ -7,7 +7,7 @@ const Navbar = () => {
     const router = useRouter();
 
     return (
-        <div className='design-navbar'>
+        <div className='design-navbar position-fixed bottom-0'>
             <ul className='list-unstyled d-flex flex-row-reverse justify-content-around align-items-center p-4 mb-0'>
                 <li>
                     <Link href='/setting'>

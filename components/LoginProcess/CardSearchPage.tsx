@@ -19,7 +19,7 @@ type Value = {
     year: number
 }
 
-const CardHomePage = () => {
+const CardSearchPage = () => {
 
     // state of search
     const [search, setSearch] = useState<undefined | string>(undefined);
@@ -29,6 +29,14 @@ const CardHomePage = () => {
     const handleChange = (event: React.SyntheticEvent<Element, Event>, value: Value): void => {
         setSearch(value?.label)
     }
+
+    const handleFocus = (): void => {
+        setIsFocused(true);
+    };
+
+    const handleBlur = (): void => {
+        setIsFocused(false);
+    };
 
     const [height, setHeight] = useState<number>(0);
     useEffect(() => {
@@ -41,14 +49,6 @@ const CardHomePage = () => {
             window.removeEventListener('resize', handleResize);
         };
     }, []);
-
-    const handleFocus = (): void => {
-        setIsFocused(true);
-    };
-
-    const handleBlur = (): void => {
-        setIsFocused(false);
-    };
 
     const top100Films = [
         { label: 'The Shawshank Redemption', year: 1994 },
@@ -179,16 +179,34 @@ const CardHomePage = () => {
 
     const card = [
         {
-            title: 'Common Verbs',
-            number: '253'
+            word: 'Eat',
+            type: 'Verb',
+            description: `put (food) into the mouth and chew and swallow it.`,
+            example: `"he was eating a hot dog"`
         },
         {
-            title: 'Common Verbs',
-            number: '300'
+            word: 'Eat',
+            type: 'Verb',
+            description: `put (food) into the mouth and chew and swallow it.`,
+            example: `"he was eating a hot dog"`
         },
         {
-            title: 'Common Verbs',
-            number: '265'
+            word: 'Eat',
+            type: 'Verb',
+            description: `put (food) into the mouth and chew and swallow it.`,
+            example: `"he was eating a hot dog"`
+        },
+        {
+            word: 'Eat',
+            type: 'Verb',
+            description: `put (food) into the mouth and chew and swallow it.`,
+            example: `"he was eating a hot dog"`
+        },
+        {
+            word: 'Eat',
+            type: 'Verb',
+            description: `put (food) into the mouth and chew and swallow it.`,
+            example: `"he was eating a hot dog"`
         },
     ]
 
@@ -199,7 +217,7 @@ const CardHomePage = () => {
                     freeSolo
                     value={search}
                     onChange={handleChange}
-                    sx={{ border: '1px solid #133266', "& fieldset": { border: 'none' }, backgroundColor: '#EFC1C4', borderRadius: '20px' }}
+                    sx={{ border: '1px solid #133266', "& fieldset": { border: 'none' }, backgroundColor: '#AEBED6', borderRadius: '20px' }}
                     renderInput={(params) => (
                         <div style={{ position: 'relative' }}>
                             <TextField
@@ -235,7 +253,7 @@ const CardHomePage = () => {
                                             color: '#133266'
                                         }}
                                     >
-                                        Search for a Cards Box
+                                        Search for a word
                                     </Box>
                                 )
                                     : (
@@ -252,10 +270,15 @@ const CardHomePage = () => {
                 {
                     card.map((item, index) => {
                         return <div className='card-global-page mt-4' key={index}>
-                            <h3 className='fw-bold'>{item.title}</h3>
-                            <div className='d-flex flex-row justify-content-between align-items-center mt-3'>
-                                <span>{item.number} Cards</span>
-                                <span className='border-3d'>3d</span>
+                            <div className='d-flex fex-row align-items-center'>
+                                <h3 className='me-3 fw-bold'>{item.word}</h3>
+                                <span className='border-type'>{item.type}</span>
+                            </div>
+                            <div className='mt-3'>
+                                {item.description}
+                            </div>
+                            <div className='mt-3'>
+                                {item.example}
                             </div>
                         </div>
                     })
@@ -265,4 +288,4 @@ const CardHomePage = () => {
     )
 }
 
-export default CardHomePage;
+export default CardSearchPage;
