@@ -26,9 +26,13 @@ const CardHomePage = () => {
 
     const [isFocused, setIsFocused] = useState<boolean>(false);
 
-    const handleChange = (event: React.SyntheticEvent<Element, Event>, value: Value): void => {
-        setSearch(value?.label)
-    }
+    const handleChange = (event: React.SyntheticEvent<Element, Event>, value: string | Value | null) => {
+        if (typeof value === 'string' || value === null) {
+            setSearch(undefined);
+        } else {
+            setSearch(value.label);
+        }
+    };
 
     const [height, setHeight] = useState<number>(0);
     useEffect(() => {
@@ -190,6 +194,22 @@ const CardHomePage = () => {
             title: 'Common Verbs',
             number: '265'
         },
+        {
+            title: 'Common Verbs',
+            number: '265'
+        },
+        {
+            title: 'Common Verbs',
+            number: '265'
+        },
+        {
+            title: 'Common Verbs',
+            number: '265'
+        },
+        {
+            title: 'Common Verbs',
+            number: '265'
+        },
     ]
 
     return (
@@ -248,10 +268,10 @@ const CardHomePage = () => {
                     fullWidth
                 />
             </div>
-            <div className='scrollable-div' style={{ overflowY: 'auto', maxHeight: `${height * 60 / 100}px` }}>
+            <div className='scrollable-div' style={{ overflowY: 'scroll', height: `${height - 280}px` }}>
                 {
                     card.map((item, index) => {
-                        return <div className='card-global-page mt-4' key={index}>
+                        return <div className={(card.length - 1) === index ? `card-global-page mt-4 mb-1` : `card-global-page mt-4`} key={index}>
                             <h3 className='fw-bold'>{item.title}</h3>
                             <div className='d-flex flex-row justify-content-between align-items-center mt-3'>
                                 <span>{item.number} Cards</span>

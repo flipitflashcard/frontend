@@ -22,14 +22,18 @@ type Value = {
 const CardSearchPage = () => {
 
     // state of search
-    const [search, setSearch] = useState<undefined | string>(undefined);
+    const [search, setSearch] = useState<string | undefined>(undefined);
 
     const [isFocused, setIsFocused] = useState<boolean>(false);
 
-    const handleChange = (event: React.SyntheticEvent<Element, Event>, value: Value): void => {
-        setSearch(value?.label)
-    }
-
+    const handleChange = (event: React.SyntheticEvent<Element, Event>, value: string | Value | null) => {
+        if (typeof value === 'string' || value === null) {
+            setSearch(undefined);
+        } else {
+            setSearch(value.label);
+        }
+    };
+    
     const handleFocus = (): void => {
         setIsFocused(true);
     };
@@ -266,10 +270,10 @@ const CardSearchPage = () => {
                     fullWidth
                 />
             </div>
-            <div className='scrollable-div' style={{ overflowY: 'auto', maxHeight: `${height * 60 / 100}px` }}>
+            <div className='scrollable-div' style={{ overflowY: 'scroll', height: `${height - 280}px` }}>
                 {
                     card.map((item, index) => {
-                        return <div className='card-global-page mt-4' key={index}>
+                        return <div className='card-global-page mt-4' key={index} >
                             <div className='d-flex fex-row align-items-center'>
                                 <h3 className='me-3 fw-bold'>{item.word}</h3>
                                 <span className='border-type'>{item.type}</span>
