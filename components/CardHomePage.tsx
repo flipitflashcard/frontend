@@ -27,11 +27,7 @@ const CardHomePage = () => {
     const [isFocused, setIsFocused] = useState<boolean>(false);
 
     const handleChange = (event: React.SyntheticEvent<Element, Event>, value: string | Value | null) => {
-        if (typeof value === 'string' || value === null) {
-            setSearch(undefined);
-        } else {
-            setSearch(value.label);
-        }
+        (typeof value === 'string' || value === null) ? setSearch(undefined) : setSearch(value.label);
     };
 
     const [height, setHeight] = useState<number>(0);
