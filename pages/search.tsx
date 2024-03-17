@@ -5,7 +5,7 @@ import { Container } from '@mui/material';
 
 // import main layer
 import Layout from '@/components/Layout';
-import CardSearchPage from '@/components/LoginProcess/CardSearchPage';
+import CardSearchPage from '@/components/CardSearchPage';
 
 const Search = () => {
     return (

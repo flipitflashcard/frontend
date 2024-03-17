@@ -72,12 +72,18 @@
 
 .bg-home {
     background-color: #AED6CC;
-    width: 100%;   
-} 
+    width: 100%;
+}
 
 .bg-search {
     background-color: #EFC1C4;
     width: 100%;
+}
+
+.bg-setting {
+    background-color: #A5DAE3;
+    width: 100%;
+    height: 100%;
 }
 
 .scrollable-div::-webkit-scrollbar {
@@ -121,6 +127,65 @@
 ::-webkit-scrollbar-thumb {
     background-color: #133266;
     border-radius: 100px;
+}
+
+.info-style {
+    display: flex;
+    background-color: white;
+    border-radius: 10px;
+    border: 2px solid #133266;
+    width: 100%;
+    text-decoration: none;
+    justify-content: center;
+    color: #133266;
+    font-size: 15pt;
+    padding: 25px;
+    font-weight: bolder;
+}
+
+.account-style,
+.Preferences-style {
+    display: flex;
+    background-color: #EFE5C1;
+    border-radius: 10px;
+    border: 2px solid #133266;
+    width: 100%;
+    text-decoration: none;
+    justify-content: center;
+    color: #133266;
+    font-size: 15pt;
+    padding: 25px;
+    font-weight: bolder;
+}
+
+.security-style {
+    display: flex;
+    background-color: #AED6CC;
+    border: 2px solid #133266;
+    border-radius: 10px;
+    width: 100%;
+    text-decoration: none;
+    justify-content: center;
+    color: #133266;
+    font-size: 15pt;
+    padding: 25px;
+    font-weight: bolder;
+}
+
+.logout-style {
+    display: flex;
+    background-color: #EFC1C4;
+    border: 2px solid #133266;
+    border-radius: 10px;
+    width: 100%;
+    text-decoration: none;
+    justify-content: center;
+    color: #133266;
+    font-size: 15pt;
+    padding: 25px;
+    font-weight: bolder;
+    text-transform: none;
+    height: 84px;
 }
 
 @keyframes fadeIn {
