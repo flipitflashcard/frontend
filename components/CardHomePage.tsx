@@ -1,7 +1,13 @@
 import React, { useState, Fragment, useEffect } from 'react';
 
 // import MUI Components
-import { TextField, Autocomplete, keyframes, Box, SelectChangeEvent } from '@mui/material';
+import { TextField, Autocomplete, keyframes, Box } from '@mui/material';
+
+// import context
+import { clickChecking } from '@/context/Exceptional';
+
+// import components
+import EffectiveCard from './EffectiveCard';
 
 const shakeLabel = keyframes`
   0% {
@@ -20,6 +26,9 @@ type Value = {
 }
 
 const CardHomePage = () => {
+
+    // add context
+    const { openEffectCard, handleChangeClick } = clickChecking();
 
     // state of search
     const [search, setSearch] = useState<undefined | string>(undefined);
@@ -267,7 +276,11 @@ const CardHomePage = () => {
             <div className='scrollable-div' style={{ overflowY: 'scroll', height: `${height - 280}px` }}>
                 {
                     card.map((item, index) => {
-                        return <div className={(card.length - 1) === index ? `card-global-page mt-4 mb-1` : `card-global-page mt-4`} key={index}>
+                        return <div
+                            className={(card.length - 1) === index ? `card-global-page mt-4 mb-1` : `card-global-page mt-4`}
+                            key={index}
+                            onClick={handleChangeClick}
+                        >
                             <h3 className='fw-bold'>{item.title}</h3>
                             <div className='d-flex flex-row justify-content-between align-items-center mt-3'>
                                 <span>{item.number} Cards</span>
@@ -277,6 +290,13 @@ const CardHomePage = () => {
                     })
                 }
             </div>
+            {
+                openEffectCard ? (
+                    <EffectiveCard />
+                ) : (
+                    null
+                )
+            }
         </Fragment>
     )
 }
