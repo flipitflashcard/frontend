@@ -1,7 +1,7 @@
 import React, { useState, Fragment, useEffect } from 'react';
 
 // import MUI Components
-import { TextField, Autocomplete, keyframes, Box } from '@mui/material';
+import { TextField, Autocomplete, keyframes, Box, Modal } from '@mui/material';
 
 // import context
 import { clickChecking } from '@/context/Exceptional';
@@ -24,6 +24,15 @@ type Value = {
     label: string,
     year: number
 }
+
+const style = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    p: 4,
+};
 
 const CardHomePage = () => {
 
@@ -292,7 +301,16 @@ const CardHomePage = () => {
             </div>
             {
                 openEffectCard ? (
-                    <EffectiveCard />
+                    <Modal
+                        open={openEffectCard}
+                        onClose={handleChangeClick}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                    >
+                        <Box sx={style}>
+                            <EffectiveCard />
+                        </Box>
+                    </Modal>
                 ) : (
                     null
                 )
