@@ -26,11 +26,14 @@ type Value = {
 }
 
 const style = {
-    position: 'absolute' as 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
+    position: "absolute" as "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
     width: 400,
+    bgcolor: "transparent",
+    border: "none",
+    outline: "none",
     p: 4,
 };
 
@@ -308,7 +311,7 @@ const CardHomePage = () => {
                         aria-describedby="modal-modal-description"
                     >
                         <Box sx={style}>
-                            <EffectiveCard />
+                            <EffectiveCard data={top100Films} />
                         </Box>
                     </Modal>
                 ) : (

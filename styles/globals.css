@@ -191,21 +191,18 @@
 .swiper {
     width: 240px;
     height: 320px;
-  }
-  
-  .swiper-slide {
+}
+
+.swiper-slide {
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 18px;
-    font-size: 22px;
+    font-size: 19px;
     font-weight: bold;
-    color: #fff;
-    background-color: #133266;
-  }
-  
-
-  
+    color: #000;
+    background: linear-gradient(#AED6CC, #EFC1C4);
+}
 
 @keyframes fadeIn {
     from {
