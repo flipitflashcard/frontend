@@ -42,7 +42,6 @@ const Navbar = () => {
                                 <path fillRule="evenodd" clipRule="evenodd" d="M18.6667 23.3333C18.6667 19.833 18.7042 18.6667 23.3334 18.6667C27.9625 18.6667 28 19.833 28 23.3333C28 26.8336 28.0148 28 23.3334 28C18.6519 28 18.6667 26.8336 18.6667 23.3333Z" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                             </g>
                         </svg>
-
                     </Link>
                 </li>
                 <li>

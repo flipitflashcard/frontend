@@ -1,7 +1,7 @@
 import React, { useState, Fragment, useEffect } from 'react';
 
 // import MUI Components
-import { TextField, Autocomplete, keyframes, Box, Modal } from '@mui/material';
+import { TextField, Autocomplete, keyframes, Box, Modal, Button } from '@mui/material';
 
 // import context
 import { clickChecking } from '@/context/Exceptional';
@@ -51,6 +51,32 @@ const CardHomePage = () => {
         (typeof value === 'string' || value === null) ? setSearch(undefined) : setSearch(value.label);
     };
 
+    const addNewCardsBox = () => {
+        const designNavbarElement = document.querySelector('.design-navbar');
+
+        if (designNavbarElement) {
+            const newCardsBoxElement = document.createElement('div');
+            newCardsBoxElement.className = 'new-cards-box';
+            newCardsBoxElement.innerHTML = `
+        <Button className='btn-new-cards-box'>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M14.7366 2.7619H8.08461C6.00461 2.7539 4.29961 4.4109 4.25061 6.4909V17.3399C4.21561 19.3899 5.84861 21.0809 7.89961 21.1169C7.96061 21.1169 8.02261 21.1169 8.08461 21.1149H16.0726C18.1416 21.0939 19.8056 19.4089 19.8026 17.3399V8.0399L14.7366 2.7619Z" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M14.4743 2.75011V5.65911C14.4743 7.07911 15.6233 8.23011 17.0433 8.23411H19.7973" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M14.2937 12.9142H9.39371" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M11.8445 15.3639V10.4639" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          New Cards Box
+        </Button>
+      `;
+
+            designNavbarElement.appendChild(newCardsBoxElement);
+        } else {
+            console.log('asd');
+            
+        }
+    }
+
+
     const [height, setHeight] = useState<number>(0);
     useEffect(() => {
         const handleResize = () => {
@@ -61,6 +87,10 @@ const CardHomePage = () => {
         return () => {
             window.removeEventListener('resize', handleResize);
         };
+    }, []);
+
+    useEffect(() => {
+        addNewCardsBox();
     }, []);
 
     const handleFocus = (): void => {
@@ -292,6 +322,7 @@ const CardHomePage = () => {
                             className={(card.length - 1) === index ? `card-global-page mt-4 mb-1` : `card-global-page mt-4`}
                             key={index}
                             onClick={handleChangeClick}
+                            style={{ cursor: 'pointer' }}
                         >
                             <h3 className='fw-bold'>{item.title}</h3>
                             <div className='d-flex flex-row justify-content-between align-items-center mt-3'>
@@ -318,6 +349,17 @@ const CardHomePage = () => {
                     null
                 )
             }
+            {/* <div className='new-cards-box'>
+                <Button className='btn-new-cards-box'>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M14.7366 2.7619H8.08461C6.00461 2.7539 4.29961 4.4109 4.25061 6.4909V17.3399C4.21561 19.3899 5.84861 21.0809 7.89961 21.1169C7.96061 21.1169 8.02261 21.1169 8.08461 21.1149H16.0726C18.1416 21.0939 19.8056 19.4089 19.8026 17.3399V8.0399L14.7366 2.7619Z" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M14.4743 2.75011V5.65911C14.4743 7.07911 15.6233 8.23011 17.0433 8.23411H19.7973" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M14.2937 12.9142H9.39371" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M11.8445 15.3639V10.4639" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    New Cards Box
+                </Button>
+            </div> */}
         </Fragment>
     )
 }
