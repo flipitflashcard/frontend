@@ -425,6 +425,7 @@ const CardHomePage = () => {
                                 FormHelperTextProps={{
                                     sx: {
                                         backgroundColor: 'transparent',
+                                        fontSize: '12pt'
                                     },
                                 }}
                                 sx={{ border: 'none', "& fieldset": { border: '1px solid black', borderRadius: '20px' } }}

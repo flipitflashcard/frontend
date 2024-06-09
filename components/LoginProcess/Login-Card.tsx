@@ -119,7 +119,18 @@ const Login_Card = () => {
                             autoComplete="email"
                             autoFocus
                             variant="outlined"
-                            style={{ backgroundColor: 'white', borderRadius: '20px' }}
+                            InputProps={{
+                                sx: {
+                                    backgroundColor: '#f9f9f9',
+                                    borderRadius: '20px',
+                                },
+                            }}
+                            FormHelperTextProps={{
+                                sx: {
+                                    backgroundColor: 'transparent',
+                                    fontSize: '12pt'
+                                },
+                            }}
                             onChange={(e) => setEmail(e.target.value)}
                             error={!!emailError}
                             helperText={emailError}
@@ -139,7 +150,18 @@ const Login_Card = () => {
                             onChange={(e) => setPassword(e.target.value)}
                             error={!!passwordError}
                             helperText={passwordError}
-                            style={{ backgroundColor: 'white', borderRadius: '20px' }}
+                            InputProps={{
+                                sx: {
+                                    backgroundColor: '#f9f9f9',
+                                    borderRadius: '20px',
+                                },
+                            }}
+                            FormHelperTextProps={{
+                                sx: {
+                                    backgroundColor: 'transparent',
+                                    fontSize: '12pt'
+                                },
+                            }}
                             sx={{ border: 'none', "& fieldset": { border: 'none' }, }}
                             className='mt-5'
                         />
