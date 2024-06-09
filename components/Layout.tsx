@@ -18,7 +18,7 @@ const Layout = ({ title, children }: Props) => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
-            <div className='d-flex flex-column justify-content-between align-items-center' style={{ height: '100vh' }}>
+            <div className='d-flex flex-column justify-content-between align-items-center' /*style={{ height: '100vh' }}*/>
                 {children}
                 <Navbar />
             </div>

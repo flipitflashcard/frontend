@@ -8,7 +8,7 @@ import { CheckProvider } from "@/context/Exceptional";
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <CheckProvider>
-      <Component {...pageProps} />;
+      <Component {...pageProps} />
     </CheckProvider>
   )
 }

@@ -77,12 +77,12 @@
     justify-content: center;
 }
 
-.btn-new-cards-box,
-.btn-add-to-cards {
+.btn-new-cards-box {
     width: 275px;
     height: 50px;
     background: var(--White, #FFFFFF);
     border-radius: 15px;
+    margin-top: 13px;
 }
 
 .bg-home {

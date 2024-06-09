@@ -1,7 +1,7 @@
 import React, { useState, Fragment, useEffect } from 'react';
 
 // import MUI Components
-import { TextField, Autocomplete, keyframes, Box, Modal, Button } from '@mui/material';
+import { TextField, Autocomplete, keyframes, Box, Modal } from '@mui/material';
 
 // import context
 import { clickChecking } from '@/context/Exceptional';
@@ -25,7 +25,7 @@ type Value = {
     year: number
 }
 
-const style = {
+const EffectStyle = {
     position: "absolute" as "absolute",
     top: "50%",
     left: "50%",
@@ -34,6 +34,18 @@ const style = {
     bgcolor: "transparent",
     border: "none",
     outline: "none",
+    p: 4,
+};
+
+const NewCardStyle = {
+    position: "absolute" as "absolute",
+    top: "50%",
+    left: "50%",
+    width: 300,
+    transform: "translate(-50%, -50%)",
+    bgcolor: "#ffffff",
+    border: "3px solid #133266",
+    borderRadius: "15px",
     p: 4,
 };
 
@@ -46,19 +58,31 @@ const CardHomePage = () => {
     const [search, setSearch] = useState<undefined | string>(undefined);
 
     const [isFocused, setIsFocused] = useState<boolean>(false);
+    const [isNewCardOpen, setIsNewCardOpen] = useState<boolean>(false);
+
+    // state of new card 
+    const [title, setTitle] = useState<string>('');
+    // const [title, setTitle] = useState<string>('');
+
+    // import state of state of new card validation 
+    const [emailError, setEmailError] = useState<string>('');
 
     const handleChange = (event: React.SyntheticEvent<Element, Event>, value: string | Value | null) => {
         (typeof value === 'string' || value === null) ? setSearch(undefined) : setSearch(value.label);
     };
 
+    const handleLoginSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+    };
+
     const addNewCardsBox = () => {
         const designNavbarElement = document.querySelector('.design-navbar');
 
-        if (designNavbarElement) {
+        if (designNavbarElement && !document.querySelector('.new-cards-box')) {
             const newCardsBoxElement = document.createElement('div');
             newCardsBoxElement.className = 'new-cards-box';
             newCardsBoxElement.innerHTML = `
-        <Button className='btn-new-cards-box'>
+        <button class='btn-new-cards-box'>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M14.7366 2.7619H8.08461C6.00461 2.7539 4.29961 4.4109 4.25061 6.4909V17.3399C4.21561 19.3899 5.84861 21.0809 7.89961 21.1169C7.96061 21.1169 8.02261 21.1169 8.08461 21.1149H16.0726C18.1416 21.0939 19.8056 19.4089 19.8026 17.3399V8.0399L14.7366 2.7619Z" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
             <path d="M14.4743 2.75011V5.65911C14.4743 7.07911 15.6233 8.23011 17.0433 8.23411H19.7973" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
@@ -66,16 +90,19 @@ const CardHomePage = () => {
             <path d="M11.8445 15.3639V10.4639" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
           New Cards Box
-        </Button>
+        </button>
       `;
+            const existingSecondChild = designNavbarElement.children[0];
+            designNavbarElement.insertBefore(newCardsBoxElement, existingSecondChild);
 
-            designNavbarElement.appendChild(newCardsBoxElement);
-        } else {
-            console.log('asd');
-            
+            const button = newCardsBoxElement.querySelector('.btn-new-cards-box');
+            if (button) {
+                button.addEventListener('click', () => setIsNewCardOpen(true));
+            } else {
+                console.error('Button element not found');
+            }
         }
     }
-
 
     const [height, setHeight] = useState<number>(0);
     useEffect(() => {
@@ -315,7 +342,7 @@ const CardHomePage = () => {
                     fullWidth
                 />
             </div>
-            <div className='scrollable-div' style={{ overflowY: 'scroll', height: `${height - 280}px` }}>
+            <div className='scrollable-div' style={{ overflowY: 'scroll', height: `${height - 350}px` }}>
                 {
                     card.map((item, index) => {
                         return <div
@@ -341,7 +368,7 @@ const CardHomePage = () => {
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description"
                     >
-                        <Box sx={style}>
+                        <Box sx={EffectStyle}>
                             <EffectiveCard data={top100Films} />
                         </Box>
                     </Modal>
@@ -349,17 +376,39 @@ const CardHomePage = () => {
                     null
                 )
             }
-            {/* <div className='new-cards-box'>
-                <Button className='btn-new-cards-box'>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd" d="M14.7366 2.7619H8.08461C6.00461 2.7539 4.29961 4.4109 4.25061 6.4909V17.3399C4.21561 19.3899 5.84861 21.0809 7.89961 21.1169C7.96061 21.1169 8.02261 21.1169 8.08461 21.1149H16.0726C18.1416 21.0939 19.8056 19.4089 19.8026 17.3399V8.0399L14.7366 2.7619Z" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                        <path d="M14.4743 2.75011V5.65911C14.4743 7.07911 15.6233 8.23011 17.0433 8.23411H19.7973" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                        <path d="M14.2937 12.9142H9.39371" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                        <path d="M11.8445 15.3639V10.4639" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                    New Cards Box
-                </Button>
-            </div> */}
+            {
+                isNewCardOpen ? (
+                    <Modal
+                        open={isNewCardOpen}
+                        onClose={() => setIsNewCardOpen(false)}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                        sx={{ backgroundColor: 'rgb(0 0 0 / 40%)' }}
+                    >
+                        <Box component="form" onSubmit={handleLoginSubmit} noValidate sx={NewCardStyle}>
+                            <TextField
+                                value={title}
+                                placeholder='FlipIt@gmail.com'
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="email"
+                                name="email"
+                                autoComplete="email"
+                                autoFocus
+                                variant="outlined"
+                                style={{ backgroundColor: '#EFC1C4' }}
+                                onChange={(e) => setTitle(e.target.value)}
+                                error={!!emailError}
+                                helperText={emailError}
+                                sx={{ border: 'none', "& fieldset": { border: '1px solid black' }, }}
+                            />
+                        </Box>
+                    </Modal>
+                ) : (
+                    null
+                )
+            }
         </Fragment>
     )
 }
