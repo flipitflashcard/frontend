@@ -1,7 +1,7 @@
 import React, { useState, Fragment, useEffect } from 'react';
 
 // import MUI Components
-import { TextField, Autocomplete, keyframes, Box, Modal } from '@mui/material';
+import { TextField, Autocomplete, keyframes, Box, Modal, Grid, Button } from '@mui/material';
 
 // import context
 import { clickChecking } from '@/context/Exceptional';
@@ -22,7 +22,7 @@ const shakeLabel = keyframes`
 
 type Value = {
     label: string,
-    year: number
+    number: number
 }
 
 const EffectStyle = {
@@ -43,7 +43,7 @@ const NewCardStyle = {
     left: "50%",
     width: 300,
     transform: "translate(-50%, -50%)",
-    bgcolor: "#ffffff",
+    bgcolor: "#AEBED6",
     border: "3px solid #133266",
     borderRadius: "15px",
     p: 4,
@@ -61,72 +61,14 @@ const CardHomePage = () => {
     const [isNewCardOpen, setIsNewCardOpen] = useState<boolean>(false);
 
     // state of new card 
-    const [title, setTitle] = useState<string>('');
-    // const [title, setTitle] = useState<string>('');
+    const [topic, setTopic] = useState<string>('');
 
     // import state of state of new card validation 
-    const [emailError, setEmailError] = useState<string>('');
+    const [topicError, setTopicError] = useState<string>('');
 
-    const handleChange = (event: React.SyntheticEvent<Element, Event>, value: string | Value | null) => {
-        (typeof value === 'string' || value === null) ? setSearch(undefined) : setSearch(value.label);
-    };
-
-    const handleLoginSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-    };
-
-    const addNewCardsBox = () => {
-        const designNavbarElement = document.querySelector('.design-navbar');
-
-        if (designNavbarElement && !document.querySelector('.new-cards-box')) {
-            const newCardsBoxElement = document.createElement('div');
-            newCardsBoxElement.className = 'new-cards-box';
-            newCardsBoxElement.innerHTML = `
-        <button class='btn-new-cards-box'>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M14.7366 2.7619H8.08461C6.00461 2.7539 4.29961 4.4109 4.25061 6.4909V17.3399C4.21561 19.3899 5.84861 21.0809 7.89961 21.1169C7.96061 21.1169 8.02261 21.1169 8.08461 21.1149H16.0726C18.1416 21.0939 19.8056 19.4089 19.8026 17.3399V8.0399L14.7366 2.7619Z" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M14.4743 2.75011V5.65911C14.4743 7.07911 15.6233 8.23011 17.0433 8.23411H19.7973" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M14.2937 12.9142H9.39371" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M11.8445 15.3639V10.4639" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-          New Cards Box
-        </button>
-      `;
-            const existingSecondChild = designNavbarElement.children[0];
-            designNavbarElement.insertBefore(newCardsBoxElement, existingSecondChild);
-
-            const button = newCardsBoxElement.querySelector('.btn-new-cards-box');
-            if (button) {
-                button.addEventListener('click', () => setIsNewCardOpen(true));
-            } else {
-                console.error('Button element not found');
-            }
-        }
-    }
-
-    const [height, setHeight] = useState<number>(0);
-    useEffect(() => {
-        const handleResize = () => {
-            setHeight(window.innerHeight);
-        };
-        handleResize();
-        window.addEventListener('resize', handleResize);
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, []);
-
-    useEffect(() => {
-        addNewCardsBox();
-    }, []);
-
-    const handleFocus = (): void => {
-        setIsFocused(true);
-    };
-
-    const handleBlur = (): void => {
-        setIsFocused(false);
-    };
+    // state of data
+    const [card, setCard] = useState<Value[]>([]);
+    const [filteredOptions, setFilteredOptions] = useState<Value[]>([]);
 
     const top100Films = [
         { label: 'The Shawshank Redemption', year: 1994 },
@@ -255,36 +197,109 @@ const CardHomePage = () => {
         { label: 'Monty Python and the Holy Grail', year: 1975 },
     ];
 
-    const card = [
-        {
-            title: 'Common Verbs',
-            number: '253'
-        },
-        {
-            title: 'Common Verbs',
-            number: '300'
-        },
-        {
-            title: 'Common Verbs',
-            number: '265'
-        },
-        {
-            title: 'Common Verbs',
-            number: '265'
-        },
-        {
-            title: 'Common Verbs',
-            number: '265'
-        },
-        {
-            title: 'Common Verbs',
-            number: '265'
-        },
-        {
-            title: 'Common Verbs',
-            number: '265'
-        },
-    ]
+    const handleChange = (event: React.SyntheticEvent<Element, Event>, value: string | Value | null) => {
+        (typeof value === 'string' || value === null) ? setSearch(undefined) : setSearch(value.label);
+    };
+
+    const handleAddNewCard = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (topic === "") {
+            setTopicError('Topic is required!');
+        } else {
+            setTopicError('');
+            const newCard = { label: topic, number: card.length + 1 };
+            setCard([...card, newCard]);
+            setTopic('');
+            setIsNewCardOpen(false);
+        }
+    }
+
+    const addNewCardsBox = () => {
+        const designNavbarElement = document.querySelector('.design-navbar');
+
+        if (designNavbarElement && !document.querySelector('.new-cards-box')) {
+            const newCardsBoxElement = document.createElement('div');
+            newCardsBoxElement.className = 'new-cards-box';
+            newCardsBoxElement.innerHTML = `
+        <button class='btn-new-cards-box'>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M14.7366 2.7619H8.08461C6.00461 2.7539 4.29961 4.4109 4.25061 6.4909V17.3399C4.21561 19.3899 5.84861 21.0809 7.89961 21.1169C7.96061 21.1169 8.02261 21.1169 8.08461 21.1149H16.0726C18.1416 21.0939 19.8056 19.4089 19.8026 17.3399V8.0399L14.7366 2.7619Z" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M14.4743 2.75011V5.65911C14.4743 7.07911 15.6233 8.23011 17.0433 8.23411H19.7973" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M14.2937 12.9142H9.39371" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M11.8445 15.3639V10.4639" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          New Cards Box
+        </button>
+      `;
+            const existingSecondChild = designNavbarElement.children[0];
+            designNavbarElement.insertBefore(newCardsBoxElement, existingSecondChild);
+
+            const button = newCardsBoxElement.querySelector('.btn-new-cards-box');
+            if (button) {
+                button.addEventListener('click', () => setIsNewCardOpen(true));
+            }
+        }
+    }
+
+    const [height, setHeight] = useState<number>(0);
+    useEffect(() => {
+        const handleResize = () => {
+            setHeight(window.innerHeight);
+        };
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+    useEffect(() => {
+        setCard([
+            {
+                label: 'Common Verbs - 1',
+                number: 253
+            },
+            {
+                label: 'Dommon Verbs - 2',
+                number: 300
+            },
+            {
+                label: 'Xommon Verbs - 3',
+                number: 265
+            },
+            {
+                label: 'Aommon Verbs - 4',
+                number: 265
+            },
+            {
+                label: 'Wommon Verbs - 5',
+                number: 265
+            },
+            {
+                label: 'Rommon Verbs - 6',
+                number: 265
+            },
+            {
+                label: 'Tommon Verbs - 7',
+                number: 265
+            }
+        ])
+        addNewCardsBox();
+    }, []);
+
+    useEffect(() => {
+        setFilteredOptions(card.filter(option =>
+            option.label.toLowerCase().includes((search || '').toLowerCase())
+        ));
+    }, [search, card]);
+
+    const handleFocus = (): void => {
+        setIsFocused(true);
+    };
+
+    const handleBlur = (): void => {
+        setIsFocused(false);
+    };
 
     return (
         <Fragment>
@@ -338,20 +353,20 @@ const CardHomePage = () => {
                             }
                         </div>
                     )}
-                    options={top100Films}
+                    options={card}
                     fullWidth
                 />
             </div>
             <div className='scrollable-div' style={{ overflowY: 'scroll', height: `${height - 350}px` }}>
                 {
-                    card.map((item, index) => {
+                    filteredOptions.map((item, index) => {
                         return <div
                             className={(card.length - 1) === index ? `card-global-page mt-4 mb-1` : `card-global-page mt-4`}
                             key={index}
                             onClick={handleChangeClick}
                             style={{ cursor: 'pointer' }}
                         >
-                            <h3 className='fw-bold'>{item.title}</h3>
+                            <h3 className='fw-bold'>{item.label}</h3>
                             <div className='d-flex flex-row justify-content-between align-items-center mt-3'>
                                 <span>{item.number} Cards</span>
                                 <span className='border-3d'>3d</span>
@@ -383,26 +398,50 @@ const CardHomePage = () => {
                         onClose={() => setIsNewCardOpen(false)}
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description"
-                        sx={{ backgroundColor: 'rgb(0 0 0 / 40%)' }}
+                        sx={{ backgroundColor: 'rgb(0 0 0 / 45%)' }}
                     >
-                        <Box component="form" onSubmit={handleLoginSubmit} noValidate sx={NewCardStyle}>
+                        <Box component="form" onSubmit={handleAddNewCard} noValidate sx={NewCardStyle}>
                             <TextField
-                                value={title}
-                                placeholder='FlipIt@gmail.com'
+                                value={topic}
+                                id="topic"
+                                label="Topic"
+                                placeholder="Common Verbs"
+                                multiline
                                 margin="normal"
-                                required
                                 fullWidth
-                                id="email"
-                                name="email"
-                                autoComplete="email"
+                                name="topic"
                                 autoFocus
+                                autoComplete="topic"
                                 variant="outlined"
-                                style={{ backgroundColor: '#EFC1C4' }}
-                                onChange={(e) => setTitle(e.target.value)}
-                                error={!!emailError}
-                                helperText={emailError}
-                                sx={{ border: 'none', "& fieldset": { border: '1px solid black' }, }}
+                                onChange={(e) => setTopic(e.target.value)}
+                                error={!!topicError}
+                                helperText={topicError}
+                                InputProps={{
+                                    sx: {
+                                        backgroundColor: '#f9f9f9',
+                                        borderRadius: '20px',
+                                    },
+                                }}
+                                FormHelperTextProps={{
+                                    sx: {
+                                        backgroundColor: 'transparent',
+                                    },
+                                }}
+                                sx={{ border: 'none', "& fieldset": { border: '1px solid black', borderRadius: '20px' } }}
                             />
+                            <Grid container className="mt-3">
+                                <Grid item xs textAlign="center">
+                                    <Button
+                                        type="submit"
+                                        variant="contained"
+                                        className="main-button"
+                                        style={{ width: '50%' }}
+                                    >
+                                        Confirm
+                                    </Button>
+                                </Grid>
+                            </Grid>
+
                         </Box>
                     </Modal>
                 ) : (
