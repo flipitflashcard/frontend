@@ -192,7 +192,18 @@ const Login_Card = () => {
                             autoComplete="email"
                             autoFocus
                             variant="outlined"
-                            style={{ backgroundColor: 'white', borderRadius: '20px' }}
+                            InputProps={{
+                                sx: {
+                                    backgroundColor: '#f9f9f9',
+                                    borderRadius: '20px',
+                                },
+                            }}
+                            FormHelperTextProps={{
+                                sx: {
+                                    backgroundColor: 'transparent',
+                                    fontSize: '12pt'
+                                },
+                            }}
                             onChange={(e) => setSignUpEmail(e.target.value)}
                             error={!!signUpEmailError}
                             helperText={signUpEmailError}
