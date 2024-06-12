@@ -106,11 +106,59 @@
 }
 
 .card-global-page {
+    position: absolute;
+    width: 100%;
     background-color: white;
     color: #133266;
     border: 1px solid #133266;
     border-radius: 15px;
     padding: 15px;
+    user-select: none;
+    cursor: grab;
+    z-index: 1;
+}
+
+.list-item {
+    position: relative;
+    height: 9.5rem;
+}
+
+.delete__design {
+    background-color: #e71717;
+    text-align: end;
+    padding: 10px;
+    width: 100%;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    height: 60%;
+    line-height: 65px;
+    font-size: large;
+}
+
+.fast__design {
+    background-color: #17e728;
+    text-align: start;
+    padding: 10px;
+    width: 100%;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+    height: 60%;
+    line-height: 65px;
+    font-size: large;
+}
+
+.list-item__option {
+    position: absolute;
+    top: 31px;
+    width: 100%;
+    display: flex;
+    flex-direction: row-reverse;
+    height: 100%;
+    padding: 0 1rem;
+    display: flex;
+    color: #ffffff;
+    font-weight: bold;
+    z-index: 0;
 }
 
 .border-3d {

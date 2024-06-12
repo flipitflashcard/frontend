@@ -266,7 +266,7 @@ const CardSearchPage = () => {
                     fullWidth
                 />
             </div>
-            <div className='scrollable-div' style={{ overflowY: 'scroll', height: `${height - 280}px` }}>
+            <div className='scrollable-div' style={{ overflowY: 'scroll', height: `${height - 250}px` }}>
                 {
                     card.map((item, index) => {
                         return <div className='card-global-page mt-4' key={index} >

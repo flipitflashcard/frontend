@@ -13,7 +13,7 @@ const home = () => {
     return (
         <Layout title='Home'>
             <main className='bg-home'>
-                <Container maxWidth='xs' className='p-5'>
+                <Container  maxWidth='sm' className='p-4'>
                     <h2 className='fw-bold' style={{ color: '#133266' }}>
                         Cards
                     </h2>

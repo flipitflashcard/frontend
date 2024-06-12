@@ -1,4 +1,4 @@
-import React, { useState, Fragment, useEffect } from 'react';
+import React, { useState, Fragment, useEffect, useRef } from 'react';
 
 // import MUI Components
 import { TextField, Autocomplete, keyframes, Box, Modal, Grid, Button } from '@mui/material';
@@ -22,7 +22,22 @@ const shakeLabel = keyframes`
 
 type Value = {
     label: string,
-    number: number
+    number: number,
+    id: number
+}
+
+type SwipeEventHandler = (isComplete: boolean) => void;
+
+interface ListItemProps {
+    id: string | number;
+    label: string;
+    index: number;
+    number: number;
+    onDelete: (id: string | number) => void;
+}
+
+interface UseSwipeOptions {
+    completedThreshold?: number;
 }
 
 const EffectStyle = {
@@ -48,6 +63,143 @@ const NewCardStyle = {
     borderRadius: "15px",
     p: 4,
 };
+
+const events = {
+    start: ["mousedown", "touchstart"],
+    end: ["mouseup", "touchend"],
+    move: ["mousemove", "touchmove"]
+};
+
+const useSwipe = (
+    onComplete: SwipeEventHandler,
+    { completedThreshold = 125 }: UseSwipeOptions = {}
+) => {
+    const ref = useRef<HTMLDivElement>(null);
+    let lastMouseX: number | null = null;
+    let isSwipeComplete = false;
+    let isSwipeLeft = false;
+
+    useEffect(() => {
+        if (ref.current && isSwipeLeft) {
+            ref.current.style.transition = "right 150ms ease-out";
+
+            addEventListeners(ref.current, events.start, handleMouseDown);
+            addEventListeners(document, events.end, resetHandler);
+        } else if (ref.current && !isSwipeLeft) {
+            ref.current.style.transition = "left 150ms ease-out";
+            addEventListeners(ref.current, events.start, handleMouseDown);
+            addEventListeners(document, events.end, resetHandler);
+        }
+
+        return () => {
+            removeEventListeners(events.start, handleMouseDown);
+            removeEventListeners(events.end, resetHandler);
+        };
+    }, []);
+
+    function addEventListeners(
+        element: EventTarget,
+        events: string[],
+        handler: EventListener
+    ) {
+        events.forEach((event) => element.addEventListener(event, handler, false));
+    }
+
+    function removeEventListeners(events: string[], handler: EventListener) {
+        events.forEach((event) => document.removeEventListener(event, handler));
+    }
+
+    function scrollOutOfView() {
+        const TRANSITION_TIME = 230;
+        const elementWidth = ref.current?.offsetWidth || 0;
+
+        if (ref.current && isSwipeLeft) {
+            ref.current.style.transition = `right ${TRANSITION_TIME}ms ease-out`;
+
+            // Need in a timeout to trigger transition
+            setTimeout(() => {
+                if (ref.current) {
+                    ref.current.style.right = `${elementWidth}px`;
+                }
+            });
+            // Wait for transition to end
+            setTimeout(() => onComplete(true), TRANSITION_TIME);
+        } else if (ref.current && !isSwipeLeft) {
+            ref.current.style.transition = `left ${TRANSITION_TIME}ms ease-out`;
+
+            // Need in a timeout to trigger transition
+            setTimeout(() => {
+                if (ref.current) {
+                    ref.current.style.left = `${elementWidth}px`;
+                }
+            });
+            // Wait for transition to end
+            setTimeout(() => onComplete(true), TRANSITION_TIME);
+        }
+    }
+
+    function handleMouseMove(event: MouseEvent | TouchEvent) {
+        // debugger
+        const screenX = ("touches" in event ? event.touches[0].screenX : event.screenX) || 0;
+        console.log(lastMouseX, " ", screenX);
+
+        if (lastMouseX && screenX !== lastMouseX) {
+            let newPosition = 0;
+
+            if (screenX < lastMouseX) {
+                const movement = Math.abs(screenX - lastMouseX);
+                const currentPosition = parseInt(ref.current?.style.right || "0", 10);
+                newPosition = currentPosition + movement;
+                isSwipeLeft = true;
+            } else if (screenX > lastMouseX) {
+                const movement = Math.abs(screenX - lastMouseX);
+                const currentPosition = parseInt(ref.current?.style.left || "0", 10);
+                newPosition = currentPosition - movement;
+                isSwipeLeft = false;
+            } else {
+                const movement = Math.abs(screenX - lastMouseX);
+                const currentPosition = isSwipeLeft ? parseInt(ref.current?.style.right || "0", 10) : parseInt(ref.current?.style.left || "0", 10);
+                newPosition = Math.max(currentPosition - movement, 0);
+            }
+
+            if (ref.current && isSwipeLeft) {
+                ref.current.style.right = `${newPosition}px`;
+                isSwipeComplete = newPosition >= completedThreshold;
+            } else if (ref.current && !isSwipeLeft) {
+                ref.current.style.left = `${newPosition}px`;
+                isSwipeComplete = newPosition <= completedThreshold;
+            }
+        }
+
+        lastMouseX = screenX;
+    }
+
+    function handleMouseMoveWrapper(event: Event) {
+        if (event instanceof MouseEvent || event instanceof TouchEvent) {
+            handleMouseMove(event);
+        }
+    }
+
+    function handleMouseDown() {
+        addEventListeners(document, events.move, handleMouseMoveWrapper);
+    }
+
+    function resetHandler() {
+        lastMouseX = null;
+        removeEventListeners(events.move, handleMouseMoveWrapper);
+
+        if (isSwipeComplete) {
+            isSwipeComplete = false;
+            scrollOutOfView();
+        } else if (ref.current && isSwipeLeft) {
+            ref.current.style.right = "0";
+        } else if (ref.current && !isSwipeLeft) {
+            ref.current.style.left = "0";
+        }
+    }
+
+    return { ref };
+}
 
 const CardHomePage = () => {
 
@@ -207,7 +359,7 @@ const CardHomePage = () => {
             setTopicError('Topic is required!');
         } else {
             setTopicError('');
-            const newCard = { label: topic, number: card.length + 1 };
+            const newCard = { label: topic, number: card.length + 1, id: card.length + 1 };
             setCard([...card, newCard]);
             setTopic('');
             setIsNewCardOpen(false);
@@ -257,31 +409,38 @@ const CardHomePage = () => {
         setCard([
             {
                 label: 'Common Verbs - 1',
-                number: 253
+                number: 253,
+                id: 1
             },
             {
                 label: 'Dommon Verbs - 2',
-                number: 300
+                number: 300,
+                id: 2
             },
             {
                 label: 'Xommon Verbs - 3',
-                number: 265
+                number: 265,
+                id: 3
             },
             {
                 label: 'Aommon Verbs - 4',
-                number: 265
+                number: 265,
+                id: 4
             },
             {
                 label: 'Wommon Verbs - 5',
-                number: 265
+                number: 265,
+                id: 5
             },
             {
                 label: 'Rommon Verbs - 6',
-                number: 265
+                number: 265,
+                id: 6
             },
             {
                 label: 'Tommon Verbs - 7',
-                number: 265
+                number: 265,
+                id: 7
             }
         ])
         addNewCardsBox();
@@ -300,6 +459,35 @@ const CardHomePage = () => {
     const handleBlur = (): void => {
         setIsFocused(false);
     };
+
+    const ListItem = ({ id, label, number, index, onDelete }: ListItemProps) => {
+        const { ref } = useSwipe(() => onDelete(id));
+
+        return (
+            <div className="list-item" style={index !== 0 ? { margin: '-20px 0' } : { marginTop: '0' }}>
+                <div className={(card.length - 1) === index ? `card-global-page mt-4 mb-1` : `card-global-page mt-4`} ref={ref}>
+                    <h3 className='fw-bold'>{label}</h3>
+                    <div className='d-flex flex-row justify-content-between align-items-center mt-3'>
+                        <span>{number} Cards</span>
+                        <span className='border-3d'>3d</span>
+                    </div>
+                </div>
+                <div className="list-item__option">
+                    <div className='delete__design'>Delete</div>
+                    <div className='fast__design'>Fast</div>
+                </div>
+            </div>
+        );
+    };
+
+    function handleDelete(id: number | string) {
+        setFilteredOptions((currentItems) => {
+            return currentItems.filter((i) => i.id !== id);
+        });
+        setCard((currentItems) => {
+            return currentItems.filter((i) => i.id !== id);
+        });
+    }
 
     return (
         <Fragment>
@@ -353,25 +541,14 @@ const CardHomePage = () => {
                             }
                         </div>
                     )}
-                    options={card}
+                    options={filteredOptions}
                     fullWidth
                 />
             </div>
-            <div className='scrollable-div' style={{ overflowY: 'scroll', height: `${height - 350}px` }}>
+            <div className='scrollable-div' style={{ overflowY: 'scroll', height: `${height - 300}px` }}>
                 {
                     filteredOptions.map((item, index) => {
-                        return <div
-                            className={(card.length - 1) === index ? `card-global-page mt-4 mb-1` : `card-global-page mt-4`}
-                            key={index}
-                            onClick={handleChangeClick}
-                            style={{ cursor: 'pointer' }}
-                        >
-                            <h3 className='fw-bold'>{item.label}</h3>
-                            <div className='d-flex flex-row justify-content-between align-items-center mt-3'>
-                                <span>{item.number} Cards</span>
-                                <span className='border-3d'>3d</span>
-                            </div>
-                        </div>
+                        return <ListItem {...item} key={item.id} index={index} onDelete={handleDelete} />
                     })
                 }
             </div>

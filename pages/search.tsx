@@ -11,7 +11,7 @@ const Search = () => {
     return (
         <Layout title='Search'>
             <main className='bg-search'>
-                <Container maxWidth='xs' className='p-5'>
+                <Container maxWidth='sm' className='p-4'>
                     <h2 className='fw-bold' style={{ color: '#133266' }}>
                         Search
                     </h2>
