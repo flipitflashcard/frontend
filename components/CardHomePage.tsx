@@ -33,7 +33,8 @@ interface ListItemProps {
     label: string;
     index: number;
     number: number;
-    onDelete: (id: string | number) => void;
+    onCompleteRight: (id: string | number) => void;
+    onCompleteLeft: (id: string | number) => void;
 }
 
 interface UseSwipeOptions {
@@ -71,22 +72,18 @@ const events = {
 };
 
 const useSwipe = (
-    onComplete: SwipeEventHandler,
+    onCompleteLeft: () => void,
+    onCompleteRight: () => void,
     { completedThreshold = 125 }: UseSwipeOptions = {}
 ) => {
     const ref = useRef<HTMLDivElement>(null);
     let lastMouseX: number | null = null;
     let isSwipeComplete = false;
-    let isSwipeLeft = false;
 
     useEffect(() => {
-        if (ref.current && isSwipeLeft) {
-            ref.current.style.transition = "right 150ms ease-out";
+        if (ref.current) {
+            ref.current.style.transition = "transform 150ms ease-out";
 
-            addEventListeners(ref.current, events.start, handleMouseDown);
-            addEventListeners(document, events.end, resetHandler);
-        } else if (ref.current && !isSwipeLeft) {
-            ref.current.style.transition = "left 150ms ease-out";
             addEventListeners(ref.current, events.start, handleMouseDown);
             addEventListeners(document, events.end, resetHandler);
         }
@@ -109,65 +106,40 @@ const useSwipe = (
         events.forEach((event) => document.removeEventListener(event, handler));
     }
 
-    function scrollOutOfView() {
+    function scrollOutOfView(isLeft: boolean) {
         const TRANSITION_TIME = 230;
         const elementWidth = ref.current?.offsetWidth || 0;
 
-        if (ref.current && isSwipeLeft) {
-            ref.current.style.transition = `right ${TRANSITION_TIME}ms ease-out`;
+        if (ref.current) {
+            ref.current.style.transition = `transform ${TRANSITION_TIME}ms ease-out`;
 
-            // Need in a timeout to trigger transition
             setTimeout(() => {
                 if (ref.current) {
-                    ref.current.style.right = `${elementWidth}px`;
+                    ref.current.style.transform = `translateX(${isLeft ? -elementWidth : elementWidth}px)`;
                 }
             });
-            // Wait for transition to end
-            setTimeout(() => onComplete(true), TRANSITION_TIME);
-        } else if (ref.current && !isSwipeLeft) {
-            ref.current.style.transition = `left ${TRANSITION_TIME}ms ease-out`;
 
-            // Need in a timeout to trigger transition
             setTimeout(() => {
-                if (ref.current) {
-                    ref.current.style.left = `${elementWidth}px`;
-                }
-            });
-            // Wait for transition to end
-            setTimeout(() => onComplete(true), TRANSITION_TIME);
+                isLeft ? onCompleteLeft() : onCompleteRight();
+            }, TRANSITION_TIME);
         }
     }
 
     function handleMouseMove(event: MouseEvent | TouchEvent) {
-        // debugger
-        const screenX = ("touches" in event ? event.touches[0].screenX : event.screenX) || 0;
-        console.log(lastMouseX, " ", screenX);
+        const screenX =
+            ("touches" in event ? event.touches[0].screenX : event.screenX) || 0;
 
         if (lastMouseX && screenX !== lastMouseX) {
-            let newPosition = 0;
+            const movement = screenX - lastMouseX;
+            const currentPosition = parseInt(
+                ref.current?.style.transform.replace(/[^0-9-]/g, "") || "0",
+                10
+            );
+            const newPosition = currentPosition + movement;
 
-            if (screenX < lastMouseX) {
-                const movement = Math.abs(screenX - lastMouseX);
-                const currentPosition = parseInt(ref.current?.style.right || "0", 10);
-                newPosition = currentPosition + movement;
-                isSwipeLeft = true;
-            } else if (screenX > lastMouseX) {
-                const movement = Math.abs(screenX - lastMouseX);
-                const currentPosition = parseInt(ref.current?.style.left || "0", 10);
-                newPosition = currentPosition - movement;
-                isSwipeLeft = false;
-            } else {
-                const movement = Math.abs(screenX - lastMouseX);
-                const currentPosition = isSwipeLeft ? parseInt(ref.current?.style.right || "0", 10) : parseInt(ref.current?.style.left || "0", 10);
-                newPosition = Math.max(currentPosition - movement, 0);
-            }
-
-            if (ref.current && isSwipeLeft) {
-                ref.current.style.right = `${newPosition}px`;
-                isSwipeComplete = newPosition >= completedThreshold;
-            } else if (ref.current && !isSwipeLeft) {
-                ref.current.style.left = `${newPosition}px`;
-                isSwipeComplete = newPosition <= completedThreshold;
+            if (ref.current) {
+                ref.current.style.transform = `translateX(${newPosition}px)`;
+                isSwipeComplete = Math.abs(newPosition) >= completedThreshold;
             }
         }
 
@@ -190,11 +162,13 @@ const useSwipe = (
 
         if (isSwipeComplete) {
             isSwipeComplete = false;
-            scrollOutOfView();
-        } else if (ref.current && isSwipeLeft) {
-            ref.current.style.right = "0";
-        } else if (ref.current && !isSwipeLeft) {
-            ref.current.style.left = "0";
+            const isLeft = parseInt(
+                ref.current?.style.transform.replace(/[^0-9-]/g, "") || "0",
+                10
+            ) < 0;
+            scrollOutOfView(isLeft);
+        } else if (ref.current) {
+            ref.current.style.transform = "translateX(0)";
         }
     }
 
@@ -460,8 +434,8 @@ const CardHomePage = () => {
         setIsFocused(false);
     };
 
-    const ListItem = ({ id, label, number, index, onDelete }: ListItemProps) => {
-        const { ref } = useSwipe(() => onDelete(id));
+    const ListItem = ({ id, label, number, index, onCompleteLeft, onCompleteRight }: ListItemProps) => {
+        const { ref } = useSwipe(() => onCompleteLeft(id), () => onCompleteRight(id));
 
         return (
             <div className="list-item" style={index !== 0 ? { margin: '-20px 0' } : { marginTop: '0' }}>
@@ -474,19 +448,23 @@ const CardHomePage = () => {
                 </div>
                 <div className="list-item__option">
                     <div className='delete__design'>Delete</div>
-                    <div className='fast__design'>Fast</div>
+                    <div className='fast__design'>Quick browsing</div>
                 </div>
             </div>
         );
     };
 
-    function handleDelete(id: number | string) {
+    function onCompleteLeft(id: number | string) {
         setFilteredOptions((currentItems) => {
             return currentItems.filter((i) => i.id !== id);
         });
         setCard((currentItems) => {
             return currentItems.filter((i) => i.id !== id);
         });
+    }
+
+    function onCompleteRight(id: number | string) {
+        handleChangeClick();
     }
 
     return (
@@ -548,7 +526,7 @@ const CardHomePage = () => {
             <div className='scrollable-div' style={{ overflowY: 'scroll', height: `${height - 300}px` }}>
                 {
                     filteredOptions.map((item, index) => {
-                        return <ListItem {...item} key={item.id} index={index} onDelete={handleDelete} />
+                        return <ListItem {...item} key={item.id} index={index} onCompleteLeft={onCompleteLeft} onCompleteRight={onCompleteRight} />
                     })
                 }
             </div>
