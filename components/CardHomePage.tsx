@@ -75,131 +75,115 @@ const useSwipe = (
     { completedThreshold = 125 }: UseSwipeOptions = {}
 ) => {
     const ref = useRef<HTMLDivElement>(null);
-    let lastMouseX: number | null = null;
-    let isSwipeComplete = false;
+    const startX = useRef<number | null>(null);
+    const currentX = useRef<number>(0);
+    const isSwipeComplete = useRef<boolean>(false);
 
     useEffect(() => {
         if (ref.current) {
             ref.current.style.transition = "transform 150ms ease-out";
-
-            addEventListeners(ref.current, events.start, handleMouseDown);
-            addEventListeners(document, events.end, resetHandler);
+            ref.current.addEventListener('touchstart', handleTouchStart, { passive: false });
+            ref.current.addEventListener('mousedown', handleMouseDown);
+            document.addEventListener('touchend', resetHandler);
+            document.addEventListener('mouseup', resetHandler);
         }
 
         return () => {
-            removeEventListeners(events.start, handleMouseDown);
-            removeEventListeners(events.end, resetHandler);
+            if (ref.current) {
+                ref.current.removeEventListener('touchstart', handleTouchStart);
+                ref.current.removeEventListener('mousedown', handleMouseDown);
+            }
+            document.removeEventListener('touchend', resetHandler);
+            document.removeEventListener('mouseup', resetHandler);
         };
     }, []);
 
-    function addEventListeners(
-        element: EventTarget,
-        events: string[],
-        handler: EventListener
-    ) {
-        events.forEach((event) => element.addEventListener(event, handler, false));
-    }
+    const handleTouchStart = (e: TouchEvent) => {
+        e.preventDefault();
+        startX.current = e.touches[0].clientX;
+        document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    };
 
-    function removeEventListeners(events: string[], handler: EventListener) {
-        events.forEach((event) => document.removeEventListener(event, handler));
-    }
+    const handleMouseDown = (e: MouseEvent) => {
+        e.preventDefault();
+        startX.current = e.clientX;
+        document.addEventListener('mousemove', handleMouseMove);
+    };
 
-    function scrollOutOfView(isLeft: boolean) {
+    const handleTouchMove = (e: TouchEvent) => {
+        e.preventDefault();
+        if (startX.current === null) return;
+        const touchX = e.touches[0].clientX;
+        const diff = touchX - startX.current;
+        updateSwipePosition(diff);
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+        e.preventDefault();
+        if (startX.current === null) return;
+        const diff = e.clientX - startX.current;
+        updateSwipePosition(diff);
+    };
+
+    const updateSwipePosition = (diff: number) => {
+        if (!ref.current) return;
+
+        currentX.current = diff;
+        ref.current.style.transform = `translateX(${diff}px)`;
+        isSwipeComplete.current = Math.abs(diff) >= completedThreshold;
+
+        updateDesignElements(diff);
+    };
+
+    const updateDesignElements = (diff: number) => {
+        if (!ref.current || !ref.current.nextElementSibling) return;
+
+        const nextSibling = ref.current.nextElementSibling as HTMLElement;
+        const deleteDesignElement = nextSibling.children[0] as HTMLElement;
+        const fastDesignElement = nextSibling.children[1] as HTMLElement;
+
+        if (diff < 0) {
+            fastDesignElement.style.display = 'none';
+            deleteDesignElement.style.display = 'block';
+        } else {
+            deleteDesignElement.style.display = 'none';
+            fastDesignElement.style.display = 'block';
+        }
+    };
+
+    const resetHandler = () => {
+        document.removeEventListener('touchmove', handleTouchMove);
+        document.removeEventListener('mousemove', handleMouseMove);
+
+        if (isSwipeComplete.current) {
+            isSwipeComplete.current = false;
+            scrollOutOfView(currentX.current < 0);
+        } else if (ref.current) {
+            ref.current.style.transition = "transform 150ms ease-out";
+            ref.current.style.transform = "translateX(0)";
+        }
+
+        startX.current = null;
+        currentX.current = 0;
+    };
+
+
+    const scrollOutOfView = (isLeft: boolean) => {
         const TRANSITION_TIME = 230;
         const elementWidth = ref.current?.offsetWidth || 0;
 
         if (ref.current) {
             ref.current.style.transition = `transform ${TRANSITION_TIME}ms ease-out`;
-
-            setTimeout(() => {
-                if (ref.current) {
-                    ref.current.style.transform = `translateX(${isLeft ? -elementWidth : elementWidth}px)`;
-                }
-            });
+            ref.current.style.transform = `translateX(${isLeft ? -elementWidth : elementWidth}px)`;
 
             setTimeout(() => {
                 isLeft ? onCompleteLeft() : onCompleteRight();
             }, TRANSITION_TIME);
         }
-    }
-
-    function handleMouseMove(event: MouseEvent | TouchEvent) {
-        const screenX =
-            ("touches" in event ? event.touches[0].screenX : event.screenX) || 0;
-
-        if (lastMouseX && screenX !== lastMouseX) {
-            const movement = screenX - lastMouseX;
-
-            const currentPosition = parseInt(
-                ref.current?.style.transform.replace(/[^0-9-]/g, "") || "0",
-                10
-            );
-            const newPosition = currentPosition + movement;
-
-            if (!ref.current || !ref.current.nextElementSibling) {
-                return;
-            }
-
-            const nextSibling = ref.current.nextElementSibling;
-            const deleteDesignElementClassName = nextSibling.children[0]?.id;
-            const fastDesignElementClassName = nextSibling.children[1]?.id;
-
-            if (typeof deleteDesignElementClassName !== 'string' || typeof fastDesignElementClassName !== 'string') {
-                return;
-            }
-
-            const deleteDesignElement = document.getElementById(`${deleteDesignElementClassName}`);
-            const fastDesignElement = document.getElementById(`${fastDesignElementClassName}`);
-
-            if (!(deleteDesignElement instanceof HTMLElement) || !(fastDesignElement instanceof HTMLElement)) {
-                return;
-            }
-
-            if (newPosition < 0) {
-                fastDesignElement.style.display = 'none';
-                deleteDesignElement.style.display = 'block';
-            } else {
-                deleteDesignElement.style.display = 'none';
-                fastDesignElement.style.display = 'block';
-            }
-
-            if (ref.current) {
-                ref.current.style.transform = `translateX(${newPosition}px)`;
-                isSwipeComplete = Math.abs(newPosition) >= completedThreshold;
-            }
-        }
-
-        lastMouseX = screenX;
-    }
-
-    function handleMouseMoveWrapper(event: Event) {
-        if (event instanceof MouseEvent || event instanceof TouchEvent) {
-            handleMouseMove(event);
-        }
-    }
-
-    function handleMouseDown() {
-        addEventListeners(document, events.move, handleMouseMoveWrapper);
-    }
-
-    function resetHandler() {
-        lastMouseX = null;
-        removeEventListeners(events.move, handleMouseMoveWrapper);
-
-        if (isSwipeComplete) {
-            isSwipeComplete = false;
-            const isLeft = parseInt(
-                ref.current?.style.transform.replace(/[^0-9-]/g, "") || "0",
-                10
-            ) < 0;
-            scrollOutOfView(isLeft);
-        } else if (ref.current) {
-            ref.current.style.transform = "translateX(0)";
-        }
-    }
+    };
 
     return { ref };
-}
+};
 
 
 const CardHomePage = () => {
