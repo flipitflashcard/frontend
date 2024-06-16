@@ -63,12 +63,6 @@ const NewCardStyle = {
     p: 4,
 };
 
-const events = {
-    start: ["mousedown", "touchstart"],
-    end: ["mouseup", "touchend"],
-    move: ["mousemove", "touchmove"]
-};
-
 const useSwipe = (
     onCompleteLeft: () => void,
     onCompleteRight: () => void,
@@ -184,7 +178,6 @@ const useSwipe = (
 
     return { ref };
 };
-
 
 const CardHomePage = () => {
 
