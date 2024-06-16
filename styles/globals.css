@@ -105,7 +105,7 @@
     display: none;
 }
 
-.card-global-page {
+.card-global-page-home {
     position: absolute;
     width: 100%;
     background-color: white;
@@ -118,13 +118,21 @@
     z-index: 1;
 }
 
+.card-global-page {
+    background-color: white;
+    color: #133266;
+    border: 1px solid #133266;
+    border-radius: 15px;
+    padding: 15px;
+}
+
 .list-item {
     position: relative;
     height: 9.5rem;
 }
 
 .delete__design {
-    background-color: #f03d3d;
+    background-color: #fe6464;
     text-align: end;
     padding: 10px;
     width: 100%;
@@ -136,7 +144,7 @@
 }
 
 .fast__design {
-    background-color: #17e728;
+    background-color: #3fb899;
     text-align: start;
     padding: 10px;
     width: 100%;

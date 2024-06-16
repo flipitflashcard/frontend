@@ -26,8 +26,6 @@ type Value = {
     id: number
 }
 
-type SwipeEventHandler = (isComplete: boolean) => void;
-
 interface ListItemProps {
     id: string | number;
     label: string;
@@ -131,11 +129,39 @@ const useSwipe = (
 
         if (lastMouseX && screenX !== lastMouseX) {
             const movement = screenX - lastMouseX;
+
             const currentPosition = parseInt(
                 ref.current?.style.transform.replace(/[^0-9-]/g, "") || "0",
                 10
             );
             const newPosition = currentPosition + movement;
+
+            if (!ref.current || !ref.current.nextElementSibling) {
+                return;
+            }
+
+            const nextSibling = ref.current.nextElementSibling;
+            const deleteDesignElementClassName = nextSibling.children[0]?.id;
+            const fastDesignElementClassName = nextSibling.children[1]?.id;
+
+            if (typeof deleteDesignElementClassName !== 'string' || typeof fastDesignElementClassName !== 'string') {
+                return;
+            }
+
+            const deleteDesignElement = document.getElementById(`${deleteDesignElementClassName}`);
+            const fastDesignElement = document.getElementById(`${fastDesignElementClassName}`);
+
+            if (!(deleteDesignElement instanceof HTMLElement) || !(fastDesignElement instanceof HTMLElement)) {
+                return;
+            }
+
+            if (newPosition < 0) {
+                fastDesignElement.style.display = 'none';
+                deleteDesignElement.style.display = 'block';
+            } else {
+                deleteDesignElement.style.display = 'none';
+                fastDesignElement.style.display = 'block';
+            }
 
             if (ref.current) {
                 ref.current.style.transform = `translateX(${newPosition}px)`;
@@ -174,6 +200,7 @@ const useSwipe = (
 
     return { ref };
 }
+
 
 const CardHomePage = () => {
 
@@ -439,7 +466,7 @@ const CardHomePage = () => {
 
         return (
             <div className="list-item" style={index !== 0 ? { margin: '-20px 0' } : { marginTop: '0' }}>
-                <div className={(card.length - 1) === index ? `card-global-page mt-4 mb-1` : `card-global-page mt-4`} ref={ref}>
+                <div className={(card.length - 1) === index ? `card-global-page-home mt-4 mb-1` : `card-global-page-home mt-4`} ref={ref}>
                     <h3 className='fw-bold'>{label}</h3>
                     <div className='d-flex flex-row justify-content-between align-items-center mt-3'>
                         <span>{number} Cards</span>
@@ -447,8 +474,8 @@ const CardHomePage = () => {
                     </div>
                 </div>
                 <div className="list-item__option">
-                    <div className='delete__design'>Delete</div>
-                    <div className='fast__design'>Quick browsing</div>
+                    <div className='delete__design' id={`delete__design__${index}`}>Delete</div>
+                    <div className='fast__design' id={`fast__design__${index}`}>Quick browsing</div>
                 </div>
             </div>
         );
