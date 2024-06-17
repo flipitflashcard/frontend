@@ -1,4 +1,7 @@
-import React, { useRef, useEffect, Fragment } from 'react';
+import React, { useRef, useEffect, Fragment, useState } from 'react';
+
+// import MUI
+import { Snackbar, Button } from '@mui/material';
 
 interface ListItemProps {
     id: string | number;
@@ -14,6 +17,36 @@ interface UseSwipeOptions {
 }
 
 const ListItem = ({ id, label, number, index, onCompleteLeft, onCompleteRight }: ListItemProps) => {
+
+    // state of undo
+    const [undo, setUndo] = useState<boolean>(false);
+    const [openUndo, setOpenUndo] = useState<boolean>(false);
+    const [counter, setCounter] = useState<number>(0);
+
+    const handleUndo = (event: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setUndo(true);
+        setOpenUndo(false);
+        setCounter(0);
+        scrollOutOfView(true);
+        // onCompleteLeft(id);  
+    };
+
+    const action = (
+        <Fragment>
+            <div className='timer-undo'>{counter}</div>
+            <Button sx={{ color: '#133266', fontWeight: 'bold' }} size="small" onClick={handleUndo}>
+                UNDO
+            </Button>
+        </Fragment>
+    );
+
+    useEffect(() => {
+        counter > 0 && setTimeout(() => setCounter(counter - 1), 1000);
+    }, [counter]);
 
     const useSwipe = (
         onCompleteLeft: () => void,
@@ -115,16 +148,29 @@ const ListItem = ({ id, label, number, index, onCompleteLeft, onCompleteRight }:
 
 
         const scrollOutOfView = (isLeft: boolean) => {
-            const TRANSITION_TIME = 230;
+            const TRANSITION_TIME = 5000;
             const elementWidth = ref.current?.offsetWidth || 0;
 
             if (ref.current) {
                 ref.current.style.transition = `transform ${TRANSITION_TIME}ms ease-out`;
                 ref.current.style.transform = `translateX(${isLeft ? -elementWidth : elementWidth}px)`;
 
-                setTimeout(() => {
-                    isLeft ? onCompleteLeft() : onCompleteRight();
-                }, TRANSITION_TIME);
+                debugger
+                if (isLeft) {
+                    setOpenUndo(true);
+                    setCounter(5);
+                    if (!undo) {
+                        setTimeout(() => {
+                            onCompleteLeft();
+                        }, TRANSITION_TIME);
+                    }
+                } else {
+                    setOpenUndo(false);
+                    setCounter(0);
+                    setTimeout(() => {
+                        onCompleteRight();
+                    }, TRANSITION_TIME);
+                }
             }
         };
 
@@ -148,6 +194,30 @@ const ListItem = ({ id, label, number, index, onCompleteLeft, onCompleteRight }:
                     <div className='fast__design' id={`fast__design__${index}`}>Quick browsing</div>
                 </div>
             </div>
+            {
+                openUndo ? (
+                    <Snackbar
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                        open={openUndo}
+                        autoHideDuration={5000}
+                        message="Note Deleted"
+                        action={action}
+                        style={{ bottom: '155px' }}
+                        ContentProps={{
+                            sx: {
+                                width: '550px',
+                                backgroundColor: '#AED6CC',
+                                boxShadow: '8px 10px 20px #4c4949',
+                                color: '#133266',
+                                fontWeight: 'bold'
+                            }
+                        }}
+
+                    />
+                ) : (
+                    null
+                )
+            }
         </Fragment>
     )
 }

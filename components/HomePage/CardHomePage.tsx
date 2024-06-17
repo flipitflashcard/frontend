@@ -68,11 +68,6 @@ const CardHomePage = () => {
     // import state of state of new card validation 
     const [topicError, setTopicError] = useState<string>('');
 
-    // state of undo
-    const [undo, setUndo] = useState<boolean>(false);
-    const [openUndo, setOpenUndo] = useState<boolean>(false);
-    const [counter, setCounter] = useState<number>(0);
-
     // state of data
     const [card, setCard] = useState<Value[]>([]);
     const [filteredOptions, setFilteredOptions] = useState<Value[]>([]);
@@ -307,10 +302,6 @@ const CardHomePage = () => {
         ));
     }, [search, card]);
 
-    useEffect(() => {
-        counter > 0 && setTimeout(() => setCounter(counter - 1), 1000);
-    }, [counter]);
-
     const handleFocus = (): void => {
         setIsFocused(true);
     };
@@ -319,47 +310,15 @@ const CardHomePage = () => {
         setIsFocused(false);
     };
 
-    const handleUndo = (event: React.SyntheticEvent | Event, reason?: string) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-
-        setUndo(true);
-        setOpenUndo(false);
-        setCounter(0);
-    };
-
-    const action = (
-        <Fragment>
-            <div className='timer-undo'>{counter}</div>
-            <Button sx={{ color: '#133266', fontWeight: 'bold' }} size="small" onClick={handleUndo}>
-                UNDO
-            </Button>
-        </Fragment>
-    );
-
     function onCompleteLeft(id: number | string) {
-        setOpenUndo(true);
-        setCounter(5);
-        console.log(undo);
-
-        if (undo) {
-            setOpenUndo(false);
-            setCounter(0);
-        } else {
-            setTimeout(() => {
-                setFilteredOptions((currentItems) => {
-                    return currentItems.filter((i) => i.id !== id);
-                });
-                setCard((currentItems) => {
-                    return currentItems.filter((i) => i.id !== id);
-                });
-                setOpenUndo(false);
-                setCounter(0);
-            }, 5000)
-        }
+        setFilteredOptions((currentItems) => {
+            return currentItems.filter((i) => i.id !== id);
+        });
+        setCard((currentItems) => {
+            return currentItems.filter((i) => i.id !== id);
+        });
     }
-    
+
     function onCompleteRight(id: number | string) {
         handleChangeClick();
     }
@@ -502,30 +461,6 @@ const CardHomePage = () => {
 
                         </Box>
                     </Modal>
-                ) : (
-                    null
-                )
-            }
-            {
-                openUndo ? (
-                    <Snackbar
-                        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-                        open={openUndo}
-                        autoHideDuration={5000}
-                        message="Note Deleted"
-                        action={action}
-                        style={{ bottom: '155px' }}
-                        ContentProps={{
-                            sx: {
-                                width: '550px',
-                                backgroundColor: '#AED6CC',
-                                boxShadow: '8px 10px 20px #4c4949',
-                                color: '#133266',
-                                fontWeight: 'bold'
-                            }
-                        }}
-
-                    />
                 ) : (
                     null
                 )
