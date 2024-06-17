@@ -1,13 +1,14 @@
-import React, { useState, Fragment, useEffect, useRef } from 'react';
+import React, { useState, Fragment, useEffect } from 'react';
 
 // import MUI Components
-import { TextField, Autocomplete, keyframes, Box, Modal, Grid, Button } from '@mui/material';
+import { TextField, Autocomplete, keyframes, Box, Modal, Grid, Button, Snackbar } from '@mui/material';
 
 // import context
 import { clickChecking } from '@/context/Exceptional';
 
 // import components
-import EffectiveCard from './EffectiveCard';
+import EffectiveCard from '../EffectiveCard';
+import ListItem from './ListItem';
 
 const shakeLabel = keyframes`
   0% {
@@ -19,25 +20,6 @@ const shakeLabel = keyframes`
   100% {
     transform: translateY(0);
   }`;
-
-type Value = {
-    label: string,
-    number: number,
-    id: number
-}
-
-interface ListItemProps {
-    id: string | number;
-    label: string;
-    index: number;
-    number: number;
-    onCompleteRight: (id: string | number) => void;
-    onCompleteLeft: (id: string | number) => void;
-}
-
-interface UseSwipeOptions {
-    completedThreshold?: number;
-}
 
 const EffectStyle = {
     position: "absolute" as "absolute",
@@ -63,121 +45,11 @@ const NewCardStyle = {
     p: 4,
 };
 
-const useSwipe = (
-    onCompleteLeft: () => void,
-    onCompleteRight: () => void,
-    { completedThreshold = 125 }: UseSwipeOptions = {}
-) => {
-    const ref = useRef<HTMLDivElement>(null);
-    const startX = useRef<number | null>(null);
-    const currentX = useRef<number>(0);
-    const isSwipeComplete = useRef<boolean>(false);
-
-    useEffect(() => {
-        if (ref.current) {
-            ref.current.style.transition = "transform 150ms ease-out";
-            ref.current.addEventListener('touchstart', handleTouchStart, { passive: false });
-            ref.current.addEventListener('mousedown', handleMouseDown);
-            document.addEventListener('touchend', resetHandler);
-            document.addEventListener('mouseup', resetHandler);
-        }
-
-        return () => {
-            if (ref.current) {
-                ref.current.removeEventListener('touchstart', handleTouchStart);
-                ref.current.removeEventListener('mousedown', handleMouseDown);
-            }
-            document.removeEventListener('touchend', resetHandler);
-            document.removeEventListener('mouseup', resetHandler);
-        };
-    }, []);
-
-    const handleTouchStart = (e: TouchEvent) => {
-        e.preventDefault();
-        startX.current = e.touches[0].clientX;
-        document.addEventListener('touchmove', handleTouchMove, { passive: false });
-    };
-
-    const handleMouseDown = (e: MouseEvent) => {
-        e.preventDefault();
-        startX.current = e.clientX;
-        document.addEventListener('mousemove', handleMouseMove);
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-        e.preventDefault();
-        if (startX.current === null) return;
-        const touchX = e.touches[0].clientX;
-        const diff = touchX - startX.current;
-        updateSwipePosition(diff);
-    };
-
-    const handleMouseMove = (e: MouseEvent) => {
-        e.preventDefault();
-        if (startX.current === null) return;
-        const diff = e.clientX - startX.current;
-        updateSwipePosition(diff);
-    };
-
-    const updateSwipePosition = (diff: number) => {
-        if (!ref.current) return;
-
-        currentX.current = diff;
-        ref.current.style.transform = `translateX(${diff}px)`;
-        isSwipeComplete.current = Math.abs(diff) >= completedThreshold;
-
-        updateDesignElements(diff);
-    };
-
-    const updateDesignElements = (diff: number) => {
-        if (!ref.current || !ref.current.nextElementSibling) return;
-
-        const nextSibling = ref.current.nextElementSibling as HTMLElement;
-        const deleteDesignElement = nextSibling.children[0] as HTMLElement;
-        const fastDesignElement = nextSibling.children[1] as HTMLElement;
-
-        if (diff < 0) {
-            fastDesignElement.style.display = 'none';
-            deleteDesignElement.style.display = 'block';
-        } else {
-            deleteDesignElement.style.display = 'none';
-            fastDesignElement.style.display = 'block';
-        }
-    };
-
-    const resetHandler = () => {
-        document.removeEventListener('touchmove', handleTouchMove);
-        document.removeEventListener('mousemove', handleMouseMove);
-
-        if (isSwipeComplete.current) {
-            isSwipeComplete.current = false;
-            scrollOutOfView(currentX.current < 0);
-        } else if (ref.current) {
-            ref.current.style.transition = "transform 150ms ease-out";
-            ref.current.style.transform = "translateX(0)";
-        }
-
-        startX.current = null;
-        currentX.current = 0;
-    };
-
-
-    const scrollOutOfView = (isLeft: boolean) => {
-        const TRANSITION_TIME = 230;
-        const elementWidth = ref.current?.offsetWidth || 0;
-
-        if (ref.current) {
-            ref.current.style.transition = `transform ${TRANSITION_TIME}ms ease-out`;
-            ref.current.style.transform = `translateX(${isLeft ? -elementWidth : elementWidth}px)`;
-
-            setTimeout(() => {
-                isLeft ? onCompleteLeft() : onCompleteRight();
-            }, TRANSITION_TIME);
-        }
-    };
-
-    return { ref };
-};
+type Value = {
+    label: string,
+    number: number,
+    id: number
+}
 
 const CardHomePage = () => {
 
@@ -195,6 +67,11 @@ const CardHomePage = () => {
 
     // import state of state of new card validation 
     const [topicError, setTopicError] = useState<string>('');
+
+    // state of undo
+    const [undo, setUndo] = useState<boolean>(false);
+    const [openUndo, setOpenUndo] = useState<boolean>(false);
+    const [counter, setCounter] = useState<number>(0);
 
     // state of data
     const [card, setCard] = useState<Value[]>([]);
@@ -430,6 +307,10 @@ const CardHomePage = () => {
         ));
     }, [search, card]);
 
+    useEffect(() => {
+        counter > 0 && setTimeout(() => setCounter(counter - 1), 1000);
+    }, [counter]);
+
     const handleFocus = (): void => {
         setIsFocused(true);
     };
@@ -438,35 +319,47 @@ const CardHomePage = () => {
         setIsFocused(false);
     };
 
-    const ListItem = ({ id, label, number, index, onCompleteLeft, onCompleteRight }: ListItemProps) => {
-        const { ref } = useSwipe(() => onCompleteLeft(id), () => onCompleteRight(id));
+    const handleUndo = (event: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
 
-        return (
-            <div className="list-item" style={index !== 0 ? { margin: '-20px 0' } : { marginTop: '0' }}>
-                <div className={(card.length - 1) === index ? `card-global-page-home mt-4 mb-1` : `card-global-page-home mt-4`} ref={ref}>
-                    <h3 className='fw-bold'>{label}</h3>
-                    <div className='d-flex flex-row justify-content-between align-items-center mt-3'>
-                        <span>{number} Cards</span>
-                        <span className='border-3d'>3d</span>
-                    </div>
-                </div>
-                <div className="list-item__option">
-                    <div className='delete__design' id={`delete__design__${index}`}>Delete</div>
-                    <div className='fast__design' id={`fast__design__${index}`}>Quick browsing</div>
-                </div>
-            </div>
-        );
+        setUndo(true);
+        setOpenUndo(false);
+        setCounter(0);
     };
 
-    function onCompleteLeft(id: number | string) {
-        setFilteredOptions((currentItems) => {
-            return currentItems.filter((i) => i.id !== id);
-        });
-        setCard((currentItems) => {
-            return currentItems.filter((i) => i.id !== id);
-        });
-    }
+    const action = (
+        <Fragment>
+            <div className='timer-undo'>{counter}</div>
+            <Button sx={{ color: '#133266', fontWeight: 'bold' }} size="small" onClick={handleUndo}>
+                UNDO
+            </Button>
+        </Fragment>
+    );
 
+    function onCompleteLeft(id: number | string) {
+        setOpenUndo(true);
+        setCounter(5);
+        console.log(undo);
+
+        if (undo) {
+            setOpenUndo(false);
+            setCounter(0);
+        } else {
+            setTimeout(() => {
+                setFilteredOptions((currentItems) => {
+                    return currentItems.filter((i) => i.id !== id);
+                });
+                setCard((currentItems) => {
+                    return currentItems.filter((i) => i.id !== id);
+                });
+                setOpenUndo(false);
+                setCounter(0);
+            }, 5000)
+        }
+    }
+    
     function onCompleteRight(id: number | string) {
         handleChangeClick();
     }
@@ -530,7 +423,12 @@ const CardHomePage = () => {
             <div className='scrollable-div' style={{ overflowY: 'scroll', height: `${height - 300}px` }}>
                 {
                     filteredOptions.map((item, index) => {
-                        return <ListItem {...item} key={item.id} index={index} onCompleteLeft={onCompleteLeft} onCompleteRight={onCompleteRight} />
+                        return <ListItem
+                            {...item}
+                            key={item.id}
+                            index={index}
+                            onCompleteLeft={onCompleteLeft}
+                            onCompleteRight={onCompleteRight} />
                     })
                 }
             </div>
@@ -604,6 +502,30 @@ const CardHomePage = () => {
 
                         </Box>
                     </Modal>
+                ) : (
+                    null
+                )
+            }
+            {
+                openUndo ? (
+                    <Snackbar
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                        open={openUndo}
+                        autoHideDuration={5000}
+                        message="Note Deleted"
+                        action={action}
+                        style={{ bottom: '155px' }}
+                        ContentProps={{
+                            sx: {
+                                width: '550px',
+                                backgroundColor: '#AED6CC',
+                                boxShadow: '8px 10px 20px #4c4949',
+                                color: '#133266',
+                                fontWeight: 'bold'
+                            }
+                        }}
+
+                    />
                 ) : (
                     null
                 )
