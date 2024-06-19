@@ -17,22 +17,33 @@ interface UseSwipeOptions {
 }
 
 const ListItem = ({ id, label, number, index, onCompleteLeft, onCompleteRight }: ListItemProps) => {
-
-    // state of undo
+    // states of undo
     const [undo, setUndo] = useState<boolean>(false);
     const [openUndo, setOpenUndo] = useState<boolean>(false);
     const [counter, setCounter] = useState<number>(0);
+    const timerRef = useRef<number | null>(null);
 
     const handleUndo = (event: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
             return;
         }
 
+        if (!ref.current) return;
+        ref.current.style.transform = "translateX(0)";
+
         setUndo(true);
         setOpenUndo(false);
         setCounter(0);
-        scrollOutOfView(true);
-        // onCompleteLeft(id);  
+        if (timerRef.current) {
+            clearTimeout(timerRef.current);
+            timerRef.current = null;
+        }
+
+        const listItemElement = document.querySelectorAll('.card-global-page-home');
+        listItemElement.forEach((item) => {
+            const s = item as HTMLElement;
+            s.style.pointerEvents = 'painted';
+        })
     };
 
     const action = (
@@ -45,7 +56,10 @@ const ListItem = ({ id, label, number, index, onCompleteLeft, onCompleteRight }:
     );
 
     useEffect(() => {
-        counter > 0 && setTimeout(() => setCounter(counter - 1), 1000);
+        if (counter > 0) {
+            const timer = setTimeout(() => setCounter(counter - 1), 1000);
+            return () => clearTimeout(timer);
+        }
     }, [counter]);
 
     const useSwipe = (
@@ -57,6 +71,8 @@ const ListItem = ({ id, label, number, index, onCompleteLeft, onCompleteRight }:
         const startX = useRef<number | null>(null);
         const currentX = useRef<number>(0);
         const isSwipeComplete = useRef<boolean>(false);
+
+
 
         useEffect(() => {
             if (ref.current) {
@@ -137,39 +153,56 @@ const ListItem = ({ id, label, number, index, onCompleteLeft, onCompleteRight }:
             if (isSwipeComplete.current) {
                 isSwipeComplete.current = false;
                 scrollOutOfView(currentX.current < 0);
-            } else if (ref.current) {
+            } else {
+                if (!ref.current) return;
                 ref.current.style.transition = "transform 150ms ease-out";
-                ref.current.style.transform = "translateX(0)";
+
+                const listItemElement = document.querySelectorAll('.card-global-page-home');
+                listItemElement.forEach(items => {
+                    if (!ref.current) return;
+                    const item = items as HTMLElement;
+                    if (item.style.pointerEvents !== 'none') {
+                        ref.current.style.transform = "translateX(0)";
+                    }
+                })
             }
 
             startX.current = null;
             currentX.current = 0;
         };
 
-
         const scrollOutOfView = (isLeft: boolean) => {
             const TRANSITION_TIME = 5000;
             const elementWidth = ref.current?.offsetWidth || 0;
 
             if (ref.current) {
-                ref.current.style.transition = `transform ${TRANSITION_TIME}ms ease-out`;
+                ref.current.style.transition = `transform ${300}ms ease-out`;
                 ref.current.style.transform = `translateX(${isLeft ? -elementWidth : elementWidth}px)`;
 
-                debugger
+                const listItemElement = document.querySelectorAll('.card-global-page-home');
+
                 if (isLeft) {
+                    listItemElement.forEach((items) => {
+                        const item = items as HTMLElement;
+                        item.style.pointerEvents = 'none';
+                    })
                     setOpenUndo(true);
                     setCounter(5);
-                    if (!undo) {
-                        setTimeout(() => {
+                    timerRef.current = window.setTimeout(() => {
+                        if (!undo) {
                             onCompleteLeft();
-                        }, TRANSITION_TIME);
-                    }
+                        }
+                        setOpenUndo(false);
+                        timerRef.current = null;
+                        listItemElement.forEach((items) => {
+                            const item = items as HTMLElement;
+                            item.style.pointerEvents = 'painted';
+                        })
+                    }, TRANSITION_TIME);
                 } else {
                     setOpenUndo(false);
                     setCounter(0);
-                    setTimeout(() => {
-                        onCompleteRight();
-                    }, TRANSITION_TIME);
+                    onCompleteRight();
                 }
             }
         };
@@ -212,14 +245,11 @@ const ListItem = ({ id, label, number, index, onCompleteLeft, onCompleteRight }:
                                 fontWeight: 'bold'
                             }
                         }}
-
                     />
-                ) : (
-                    null
-                )
+                ) : null
             }
         </Fragment>
-    )
+    );
 }
 
 export default ListItem;
