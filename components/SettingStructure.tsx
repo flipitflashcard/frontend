@@ -29,7 +29,7 @@ const SettingStructure = () => {
 
     return (
         <Fragment>
-            <div style={{ height: `${height - 200}px` }}>
+            <div style={{ height: `${height - 150}px` }}>
                 <Link href='#' className="info-style d-felx mt-5 flex-row align-items-center justify-content-center">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path fillRule="evenodd" clipRule="evenodd" d="M16.3341 2.75011H7.66512C4.64412 2.75011 2.75012 4.88911 2.75012 7.91611V16.0841C2.75012 19.1111 4.63512 21.2501 7.66512 21.2501H16.3331C19.3641 21.2501 21.2501 19.1111 21.2501 16.0841V7.91611C21.2501 4.88911 19.3641 2.75011 16.3341 2.75011Z" stroke="#133266" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
