@@ -26,11 +26,6 @@ const ListItem = ({ id, label, number, index, onCompleteLeft, onCompleteRight }:
     const [counter, setCounter] = useState<number>(0);
     const timerRef = useRef<number | null>(null);
 
-    const goToReviewPage = (label: string) => {
-        console.log(label);
-        push(`/review/${label}`)
-    }
-
     const handleUndo = (event: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
             return;
@@ -48,9 +43,9 @@ const ListItem = ({ id, label, number, index, onCompleteLeft, onCompleteRight }:
         }
 
         const listItemElement = document.querySelectorAll('.card-global-page-home');
-        listItemElement.forEach((item) => {
-            const s = item as HTMLElement;
-            s.style.pointerEvents = 'painted';
+        listItemElement.forEach((items) => {
+            const item = items as HTMLElement;
+            item.style.pointerEvents = 'painted';
         })
     };
 
@@ -69,14 +64,6 @@ const ListItem = ({ id, label, number, index, onCompleteLeft, onCompleteRight }:
             return () => clearTimeout(timer);
         }
     }, [counter]);
-
-    useEffect(() => {
-        // if (ref.current) {
-        //     ref.current.addEventListener('click', () => {
-        //         console.log(ref.current);
-        //     })
-        // }
-    }, [])
 
     const useSwipe = (
         onCompleteLeft: () => void,

@@ -13,7 +13,7 @@ const Layout = ({ title, children }: Props) => {
     return (
         <Fragment>
             <Head>
-                <title>{`Flip - ${title}`}</title>
+                <title>{`Flip-${title}`}</title>
                 <meta name="description" content="The ready sample for NextJs" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/favicon.ico" />
