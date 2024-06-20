@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, Fragment, useState } from 'react';
+import { useRouter } from "next/router";
 
 // import MUI
 import { Snackbar, Button } from '@mui/material';
@@ -17,11 +18,18 @@ interface UseSwipeOptions {
 }
 
 const ListItem = ({ id, label, number, index, onCompleteLeft, onCompleteRight }: ListItemProps) => {
+    const { push } = useRouter();
+
     // states of undo
     const [undo, setUndo] = useState<boolean>(false);
     const [openUndo, setOpenUndo] = useState<boolean>(false);
     const [counter, setCounter] = useState<number>(0);
     const timerRef = useRef<number | null>(null);
+
+    const goToReviewPage = (label: string) => {
+        console.log(label);
+        push(`/review/${label}`)
+    }
 
     const handleUndo = (event: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
@@ -62,6 +70,14 @@ const ListItem = ({ id, label, number, index, onCompleteLeft, onCompleteRight }:
         }
     }, [counter]);
 
+    useEffect(() => {
+        // if (ref.current) {
+        //     ref.current.addEventListener('click', () => {
+        //         console.log(ref.current);
+        //     })
+        // }
+    }, [])
+
     const useSwipe = (
         onCompleteLeft: () => void,
         onCompleteRight: () => void,
@@ -71,8 +87,7 @@ const ListItem = ({ id, label, number, index, onCompleteLeft, onCompleteRight }:
         const startX = useRef<number | null>(null);
         const currentX = useRef<number>(0);
         const isSwipeComplete = useRef<boolean>(false);
-
-
+        const isDragging = useRef<boolean>(false);
 
         useEffect(() => {
             if (ref.current) {
@@ -96,12 +111,14 @@ const ListItem = ({ id, label, number, index, onCompleteLeft, onCompleteRight }:
         const handleTouchStart = (e: TouchEvent) => {
             e.preventDefault();
             startX.current = e.touches[0].clientX;
+            isDragging.current = false;
             document.addEventListener('touchmove', handleTouchMove, { passive: false });
         };
 
         const handleMouseDown = (e: MouseEvent) => {
             e.preventDefault();
             startX.current = e.clientX;
+            isDragging.current = false;
             document.addEventListener('mousemove', handleMouseMove);
         };
 
@@ -110,6 +127,7 @@ const ListItem = ({ id, label, number, index, onCompleteLeft, onCompleteRight }:
             if (startX.current === null) return;
             const touchX = e.touches[0].clientX;
             const diff = touchX - startX.current;
+            isDragging.current = true;
             updateSwipePosition(diff);
         };
 
@@ -117,6 +135,7 @@ const ListItem = ({ id, label, number, index, onCompleteLeft, onCompleteRight }:
             e.preventDefault();
             if (startX.current === null) return;
             const diff = e.clientX - startX.current;
+            isDragging.current = true;
             updateSwipePosition(diff);
         };
 
@@ -153,6 +172,8 @@ const ListItem = ({ id, label, number, index, onCompleteLeft, onCompleteRight }:
             if (isSwipeComplete.current) {
                 isSwipeComplete.current = false;
                 scrollOutOfView(currentX.current < 0);
+            } else if (!isDragging.current && startX.current !== null) {
+                push(`/review/${ref.current?.children[0].innerHTML}`)
             } else {
                 if (!ref.current) return;
                 ref.current.style.transition = "transform 150ms ease-out";
@@ -169,6 +190,7 @@ const ListItem = ({ id, label, number, index, onCompleteLeft, onCompleteRight }:
 
             startX.current = null;
             currentX.current = 0;
+            isDragging.current = false;
         };
 
         const scrollOutOfView = (isLeft: boolean) => {
@@ -214,7 +236,7 @@ const ListItem = ({ id, label, number, index, onCompleteLeft, onCompleteRight }:
 
     return (
         <Fragment>
-            <div className="list-item" style={index !== 0 ? { margin: '-20px 0' } : { marginTop: '0' }}>
+            <div className="list-item" style={index !== 0 ? { margin: '-20px 0' } : { marginTop: '0' }} /*onClick={() => goToReviewPage(label)}*/>
                 <div className='card-global-page-home mt-4' ref={ref}>
                     <h3 className='fw-bold'>{label}</h3>
                     <div className='d-flex flex-row justify-content-between align-items-center mt-3'>
