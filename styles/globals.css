@@ -35,6 +35,10 @@
     color: #133266;
 }
 
+.cursor-pointer {
+    cursor: pointer;
+}
+
 .seconde-button {
     background-color: #fff;
     color: #e72451;
@@ -92,6 +96,11 @@
 
 .bg-search {
     background-color: #EFC1C4;
+    width: 100%;
+}
+
+.bg-edit {
+    background-color: #EFE5C1;
     width: 100%;
 }
 
@@ -341,6 +350,30 @@
     font-weight: bold;
     color: #000;
     background: linear-gradient(#AED6CC, #EFC1C4);
+}
+
+.cancel-style {
+    width: 100px;
+    height: 55px;
+    padding: 18px 29px 18px 29px;
+    gap: 8px;
+    border-radius: 15px;
+    opacity: 0px;
+    border: 3px solid var(--Jet-Stream, #AED6CC);
+    color: #AED6CC;
+    font-weight: bold;
+}
+
+.delete-style {
+    width: 100px;
+    height: 55px;
+    padding: 18px 29px 18px 29px;
+    gap: 8px;
+    border-radius: 15px;
+    opacity: 0px;
+    border: 3px solid var(--Jet-Stream, #EFC1C4);
+    color: #EFC1C4;
+    font-weight: bold;
 }
 
 @keyframes fadeIn {

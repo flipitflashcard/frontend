@@ -10,7 +10,7 @@ interface ListItemProps {
     example: string,
     id: string | number;
     index: number;
-    onEditAction: (id: string | number) => void;
+    onEditAction: (id: string | number, label: string, type: string) => void;
     onDeleteAction: (id: string | number) => void;
 }
 
@@ -158,7 +158,7 @@ const ListItemBox = ({ id, index, label, type, description, example, onDeleteAct
                                 <path d="M11.5208 6.50092L16.9731 10.688" stroke="#133266" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                             }
-                            onClick={() => onEditAction(id)}
+                            onClick={() => onEditAction(id, label, type)}
                         >Edit</Button>
                     </div>
                 </div>

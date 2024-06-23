@@ -1,7 +1,8 @@
 import React, { useState, Fragment, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 // import MUI Components
-import { TextField, Autocomplete, keyframes, Box } from '@mui/material';
+import { TextField, Autocomplete, keyframes, Box, Modal, Typography, Button } from '@mui/material';
 
 // import components
 import ListItemBox from './ListItemBox';
@@ -17,6 +18,24 @@ const shakeLabel = keyframes`
     transform: translateY(0);
   }`;
 
+const styleModalOption = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 275,
+    height: 275,
+    gap: '0',
+    borderRadius: '15px',
+    borderTopWidth: '3px',
+    borderBottomWidth: '6px',
+    background: "#FFFFFF",
+    borderWidth: '3px, 3px, 5px, 3px',
+    borderStyle: 'solid',
+    borderColor: '#133266',
+    p: 3
+};
+
 type Value = {
     label: string,
     type: string,
@@ -30,6 +49,8 @@ interface Props {
 }
 
 const CardReviewPage = ({ cards }: Props) => {
+    const { push } = useRouter();
+
     const [isFocused, setIsFocused] = useState<boolean>(false);
 
     // state of search
@@ -38,6 +59,10 @@ const CardReviewPage = ({ cards }: Props) => {
     // state of data
     const [card, setCard] = useState<Value[]>(cards);
     const [filteredOptions, setFilteredOptions] = useState<Value[]>([]);
+
+    //  state of open modal yws or no
+    const [openModal, setOpenModal] = React.useState(false);
+    const [deleteId, setDeleteId] = useState<number | string | null>(null);
 
     const handleChange = (event: React.SyntheticEvent<Element, Event>, value: string | Value | null) => {
         (typeof value === 'string' || value === null) ? setSearch(undefined) : setSearch(value.label);
@@ -61,17 +86,23 @@ const CardReviewPage = ({ cards }: Props) => {
         ));
     }, [search, card]);
 
-    function onDeleteAction(id: number | string) {
-        setFilteredOptions((currentItems) => {
-            return currentItems.filter((i) => i.id !== id);
-        });
-        setCard((currentItems) => {
-            return currentItems.filter((i) => i.id !== id);
-        });
-    }
+    const confirmDelete = () => {
+        if (deleteId !== null) {
+            setFilteredOptions(currentItems => currentItems.filter(i => i.id !== deleteId));
+            setCard(currentItems => currentItems.filter(i => i.id !== deleteId));
+            setOpenModal(false);
+            setDeleteId(null);
+        }
+    };
 
-    function onEditAction(id: number | string) {
-    }
+    const onDeleteAction = (id: number | string) => {
+        setDeleteId(id);
+        setOpenModal(true);
+    };
+
+    const onEditAction = (id: number | string, label: string, type: string) => {
+        push(`/edit-word/${label}-${type}-${id}`)
+    };
 
     return (
         <Fragment>
@@ -141,7 +172,34 @@ const CardReviewPage = ({ cards }: Props) => {
                     })
                 }
             </div>
-        </Fragment>
+            {
+                openModal ? (
+                    <Modal
+                        open={openModal}
+                        onClose={() => setOpenModal(false)}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                    >
+                        <Box sx={styleModalOption}>
+                            <Typography id="modal-modal-title" variant="h6" component="h2"
+                                sx={{
+                                    fontSize: '20px',
+                                    fontWeight: 'bold',
+                                    lineHeight: '23.14px',
+                                    textAlign: 'left',
+                                    color: '#133266',
+                                }}>
+                                Are You Sure You Want To Delete This Word From The Cards Box?
+                            </Typography>
+                            <Typography id="modal-modal-description" sx={{ mt: 10 }} display='flex' alignItems='center' justifyContent='space-between' flexDirection='row'>
+                                <Button className='cancel-style' onClick={() => setOpenModal(false)}>Cancel</Button>
+                                <Button className='delete-style' onClick={confirmDelete}>Delete</Button>
+                            </Typography>
+                        </Box>
+                    </Modal>
+                ) : null
+            }
+        </Fragment >
     )
 }
 
