@@ -1,4 +1,5 @@
 import React from 'react';
+import { useRouter } from 'next/router';
 import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 
 // import MUI Components
@@ -18,17 +19,33 @@ interface Props {
             example: string
             type: string
             id: number
+        },
+        cardsBox: {
+            label: string,
+            number: number,
+            id: number
+        }[],
+        chiocedCardBox: {
+            label: string,
+            number: number,
+            id: number
         }
     };
 }
 
 const EditWord = ({ data }: Props) => {
+    const { push, asPath } = useRouter();
+
+    const backToReviewPage = () => {
+        push(`/review/${asPath.split('/')[2].split('-')[1]}`);
+    }
+
     return (
         <Layout title={`Edit Word`}>
             <main className='bg-edit'>
                 <Container maxWidth='sm' className='p-4'>
                     <div className='d-flex flex-row align-items-center'>
-                        <span className='cursor-pointer'>
+                        <span className='cursor-pointer' onClick={backToReviewPage}>
                             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path fillRule="evenodd" clipRule="evenodd" d="M3.66668 10.2212L3.66668 21.7798C3.66668 25.8065 6.51868 28.3332 10.5547 28.3332L21.4453 28.3332C25.4813 28.3332 28.3333 25.8198 28.3333 21.7798L28.3333 10.2212C28.3333 6.18117 25.4813 3.6665 21.4453 3.6665L10.5547 3.6665C6.51868 3.6665 3.66668 6.18117 3.66668 10.2212Z" stroke="#133266" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                                 <path d="M10.552 15.9999L21.448 15.9999" stroke="#133266" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -39,7 +56,7 @@ const EditWord = ({ data }: Props) => {
                             Edit Word
                         </h2>
                     </div>
-                    <EditWordsPage chiocedWord={data.chiocedWord} />
+                    <EditWordsPage chiocedWord={data.chiocedWord} cardsBox={data.cardsBox} chiocedCardBox={data.chiocedCardBox} />
                 </Container>
             </main>
         </Layout>
@@ -51,6 +68,7 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
 
     const url_details = decodeURIComponent(resolvedUrl).split('/');
     const id = parseInt(url_details[2].split('-')[2]);
+    const boxName = url_details[2].split('-')[1];
 
     const data = [
         {
@@ -91,10 +109,51 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
     ]
     const chiocedWord = data.find((item) => item.id === id);
 
+    const cardsBox = [
+        {
+            label: 'Common Verbs',
+            number: 253,
+            id: 1
+        },
+        {
+            label: 'Dommon Verbs',
+            number: 300,
+            id: 2
+        },
+        {
+            label: 'Xommon Verbs',
+            number: 265,
+            id: 3
+        },
+        {
+            label: 'Aommon Verbs',
+            number: 265,
+            id: 4
+        },
+        {
+            label: 'Wommon Verbs',
+            number: 265,
+            id: 5
+        },
+        {
+            label: 'Rommon Verbs',
+            number: 265,
+            id: 6
+        },
+        {
+            label: 'Tommon Verbs',
+            number: 265,
+            id: 7
+        }
+    ]
+    const chiocedCardBox = cardsBox.find((item) => item.label === boxName);
+
     return {
         props: {
             data: {
-                chiocedWord
+                chiocedWord,
+                cardsBox,
+                chiocedCardBox
             }
         }
     };

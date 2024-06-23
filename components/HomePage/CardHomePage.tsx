@@ -258,37 +258,37 @@ const CardHomePage = () => {
     useEffect(() => {
         setCard([
             {
-                label: 'Common Verbs - 1',
+                label: 'Common Verbs',
                 number: 253,
                 id: 1
             },
             {
-                label: 'Dommon Verbs - 2',
+                label: 'Dommon Verbs',
                 number: 300,
                 id: 2
             },
             {
-                label: 'Xommon Verbs - 3',
+                label: 'Xommon Verbs',
                 number: 265,
                 id: 3
             },
             {
-                label: 'Aommon Verbs - 4',
+                label: 'Aommon Verbs',
                 number: 265,
                 id: 4
             },
             {
-                label: 'Wommon Verbs - 5',
+                label: 'Wommon Verbs',
                 number: 265,
                 id: 5
             },
             {
-                label: 'Rommon Verbs - 6',
+                label: 'Rommon Verbs',
                 number: 265,
                 id: 6
             },
             {
-                label: 'Tommon Verbs - 7',
+                label: 'Tommon Verbs',
                 number: 265,
                 id: 7
             }

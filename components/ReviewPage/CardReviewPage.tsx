@@ -49,7 +49,7 @@ interface Props {
 }
 
 const CardReviewPage = ({ cards }: Props) => {
-    const { push } = useRouter();
+    const { push, asPath } = useRouter();
 
     const [isFocused, setIsFocused] = useState<boolean>(false);
 
@@ -101,7 +101,7 @@ const CardReviewPage = ({ cards }: Props) => {
     };
 
     const onEditAction = (id: number | string, label: string, type: string) => {
-        push(`/edit-word/${label}-${type}-${id}`)
+        push(`/edit-word/${label}-${asPath.split('/')[2]}-${id}`)
     };
 
     return (
