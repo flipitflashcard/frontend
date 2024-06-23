@@ -22,9 +22,9 @@ const Navbar = () => {
                     </Link>
                 </li>
                 <li>
-                    <Link href='/etc'>
+                    <Link href='/add-word'>
                         <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <g opacity={router.asPath !== '/etc' ? "0.5" : ""}>
+                            <g opacity={router.asPath !== '/add-word' ? "0.5" : ""}>
                                 <path d="M16 11.1031V20.8715" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                                 <path d="M20.8889 15.9873H11.1111" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                                 <path fillRule="evenodd" clipRule="evenodd" d="M22.2476 2.66666H9.7524C5.39685 2.66666 2.66669 5.74943 2.66669 10.1135V21.8864C2.66669 26.2505 5.38415 29.3333 9.7524 29.3333H22.2476C26.6159 29.3333 29.3334 26.2505 29.3334 21.8864V10.1135C29.3334 5.74943 26.6159 2.66666 22.2476 2.66666Z" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />

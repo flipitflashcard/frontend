@@ -75,7 +75,8 @@
 }
 
 .new-cards-box,
-.save-change {
+.save-change,
+.add-words {
     background-color: #133266;
     width: 100%;
     display: flex;
@@ -83,7 +84,8 @@
 }
 
 .btn-new-cards-box,
-.btn-save-change {
+.btn-save-change,
+.btn-add-words {
     width: 275px;
     height: 50px;
     background: var(--White, #FFFFFF);
@@ -260,7 +262,7 @@
     border-radius: 15px;
     background-color: white;
     border: 1px solid #133266;
-    width: 20%;
+    width: 25%;
     text-align: center;
     font-weight: bold;
 }
@@ -279,11 +281,10 @@
     border-radius: 100px;
 }
 
-.info-style {
+.account-style {
     display: flex;
     background-color: white;
-    border-radius: 10px;
-    border: 2px solid #133266;
+    border-radius: 15px;
     width: 100%;
     text-decoration: none;
     justify-content: center;
@@ -291,14 +292,16 @@
     font-size: 15pt;
     padding: 25px;
     font-weight: bolder;
+    border-top-width: 3px;
+    border-bottom-width: 6px;
+    border-style: solid;
+    border-color: var(--Indigo, #133266);
 }
 
-.account-style,
-.Preferences-style {
+.preferences-style {
     display: flex;
     background-color: #EFE5C1;
-    border-radius: 10px;
-    border: 2px solid #133266;
+    border-radius: 15px;
     width: 100%;
     text-decoration: none;
     justify-content: center;
@@ -306,36 +309,47 @@
     font-size: 15pt;
     padding: 25px;
     font-weight: bolder;
+    border-top-width: 3px;
+    border-bottom-width: 6px;
+    border-style: solid;
+    border-color: var(--Indigo, #133266);
 }
 
-.security-style {
+.info-style {
     display: flex;
     background-color: #AED6CC;
-    border: 2px solid #133266;
-    border-radius: 10px;
+    border-radius: 15px;
     width: 100%;
     text-decoration: none;
     justify-content: center;
     color: #133266;
     font-size: 15pt;
-    padding: 25px;
     font-weight: bolder;
+    height: 84px;
+    border-top-width: 3px;
+    border-bottom-width: 6px;
+    border-style: solid;
+    border-color: var(--Indigo, #133266);
 }
 
 .logout-style {
     display: flex;
     background-color: #EFC1C4;
-    border: 2px solid #133266;
-    border-radius: 10px;
+    border-radius: 15px;
     width: 100%;
     text-decoration: none;
     justify-content: center;
     color: #133266;
     font-size: 15pt;
-    padding: 25px;
     font-weight: bolder;
     text-transform: none;
     height: 84px;
+    border-top-width: 3px;
+    border-bottom-width: 6px;
+    border-right: 3px;
+    border-left: 3px;
+    border-style: solid;
+    border-color: var(--Indigo, #133266);
 }
 
 .swiper {
