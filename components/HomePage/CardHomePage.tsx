@@ -1,4 +1,5 @@
 import React, { useState, Fragment, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 // import MUI Components
 import { TextField, Autocomplete, keyframes, Box, Modal, Grid, Button, Snackbar } from '@mui/material';
@@ -52,6 +53,7 @@ type Value = {
 }
 
 const CardHomePage = () => {
+    const { push } = useRouter();
 
     // add context
     const { openEffectCard, handleChangeClick } = clickChecking();
@@ -238,7 +240,7 @@ const CardHomePage = () => {
 
             const button = newCardsBoxElement.querySelector('.btn-new-cards-box');
             if (button) {
-                button.addEventListener('click', () => setIsNewCardOpen(true));
+                button.addEventListener('click', () => push('/add-card-box'));
             }
         }
     }
@@ -407,7 +409,7 @@ const CardHomePage = () => {
                     null
                 )
             }
-            {
+            {/* {
                 isNewCardOpen ? (
                     <Modal
                         open={isNewCardOpen}
@@ -464,7 +466,7 @@ const CardHomePage = () => {
                 ) : (
                     null
                 )
-            }
+            } */}
         </Fragment>
     )
 }

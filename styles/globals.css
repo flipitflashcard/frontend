@@ -93,7 +93,8 @@
     margin-top: 13px;
 }
 
-.bg-home {
+.bg-home,
+.bg-add-card-box {
     background-color: #AED6CC;
     width: 100%;
 }
@@ -377,6 +378,26 @@
     opacity: 0px;
     border: 3px solid var(--Jet-Stream, #AED6CC);
     color: #AED6CC;
+    font-weight: bold;
+}
+
+.discard-style {
+    width: 100px;
+    height: 55px;
+    border: 3px solid var(--Baby-Pink, #EFC1C4);
+    background-color: #ffffff;
+    color: #EFC1C4;
+    border-radius: 15px;
+    font-weight: bold;
+}
+
+.save-style {
+    width: 100px;
+    height: 55px;
+    border: 3px solid var(--Baby-Pink, #AED6CC);
+    background-color: #ffffff;
+    color: #AED6CC;
+    border-radius: 15px;
     font-weight: bold;
 }
 

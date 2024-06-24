@@ -304,7 +304,9 @@ const AddWordsPage = ({ cardsBox }: Props) => {
                         )}
                     >
                         <MenuItem value="">
-                            Search for Box Cards
+                            <em>
+                                Search for Box Cards
+                            </em>
                         </MenuItem>
                         {cardsBox.map((item) => (
                             <MenuItem key={item.id} value={item.label}>{item.label}</MenuItem>

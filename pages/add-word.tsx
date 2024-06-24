@@ -20,7 +20,7 @@ interface Props {
     };
 }
 
-const Etc = ({ data }: Props) => {
+const AddWord = ({ data }: Props) => {
     return (
         <Layout title='Add Word'>
             <main className='bg-edit'>
@@ -86,4 +86,4 @@ export const getServerSideProps: GetServerSideProps = async () => {
     };
 };
 
-export default Etc;
+export default AddWord;
