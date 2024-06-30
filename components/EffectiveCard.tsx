@@ -28,10 +28,26 @@ const EffectiveCard: React.FC<EffectiveCardProps> = ({ data }) => {
                 grabCursor={true}
                 modules={[EffectCards]}
                 className="mySwiper"
+                style={{
+                    width: '240px',
+                    height: '320px'
+                }}
             >
                 {
                     data.map((item, index) => {
-                        return <SwiperSlide key={index}>
+                        return <SwiperSlide
+                            key={index}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                borderRadius: '18px',
+                                fontSize: '19px',
+                                fontWeight: 'bold',
+                                color: '#000',
+                                background: 'linear-gradient(#AED6CC, #EFC1C4)',
+                            }}
+                        >
                             <div className="p-4 d-flex flex-column justify-content-center align-items-center h-100">
                                 <p>{item.label}</p>
                                 <p>{item.year}</p>

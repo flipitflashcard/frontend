@@ -17,6 +17,16 @@
     padding: 40px;
 }
 
+.bg-card-view-body {
+    background-image: url("../public/Images/FlipitPattern.svg");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    width: 100%;
+    /* height: 102.2vh;
+    padding: 40px; */
+}
+
 .design-login {
     background-color: #AEBED6;
     border-radius: 20px;
@@ -113,6 +123,11 @@
     background-color: #A5DAE3;
     width: 100%;
     height: 100%;
+}
+
+.bg-card-title-view {
+    background-color: #133266;
+    width: 100%;
 }
 
 .scrollable-div::-webkit-scrollbar {
@@ -353,12 +368,12 @@
     border-color: var(--Indigo, #133266);
 }
 
-.swiper {
+/* .swiper {
     width: 240px;
     height: 320px;
-}
+} */
 
-.swiper-slide {
+/* .swiper-slide {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -367,7 +382,7 @@
     font-weight: bold;
     color: #000;
     background: linear-gradient(#AED6CC, #EFC1C4);
-}
+} */
 
 .cancel-style {
     width: 100px;

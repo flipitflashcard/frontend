@@ -23,6 +23,10 @@ const Review = ({ data }: Props) => {
         push('/home');
     }
 
+    const goToCardView = () => {
+        push(`/card-view/${data.title}`);
+    }
+
     return (
         <Layout title={`Review-${data.title}`}>
             <main className='bg-search'>
@@ -38,7 +42,7 @@ const Review = ({ data }: Props) => {
                         <h2 className='fw-bold' style={{ color: '#133266' }}>
                             {data.title}
                         </h2>
-                        <span className='cursor-pointer'>
+                        <span className='cursor-pointer' onClick={goToCardView}>
                             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path fillRule="evenodd" clipRule="evenodd" d="M16 3.33331C22.9945 3.33331 28.6667 9.00418 28.6667 16C28.6667 22.9958 22.9945 28.6666 16 28.6666C9.0042 28.6666 3.33333 22.9958 3.33333 16C3.33333 9.00418 9.0042 3.33331 16 3.33331Z" stroke="#133266" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                                 <path fillRule="evenodd" clipRule="evenodd" d="M20 15.9935C20 14.912 14.4567 11.4522 13.8279 12.0743C13.1991 12.6964 13.1386 19.2321 13.8279 19.9128C14.5172 20.5959 20 17.075 20 15.9935Z" stroke="#133266" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
