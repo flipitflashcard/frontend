@@ -11,7 +11,7 @@ import CardHomePage from '@/components/HomePage/CardHomePage';
 const home = () => {
 
     return (
-        <Layout title='Home'>
+        <Layout title='Cards Box'>
             <main className='bg-home'>
                 <Container maxWidth='sm' className='p-4'>
                     <h2 className='fw-bold' style={{ color: '#133266' }}>

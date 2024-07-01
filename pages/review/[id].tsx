@@ -20,7 +20,7 @@ const Review = ({ data }: Props) => {
     const { push } = useRouter();
 
     const backToHomePage = () => {
-        push('/home');
+        push('/flip');
     }
 
     const goToCardView = () => {

@@ -244,7 +244,7 @@ const ListItem = ({ id, label, number, index, onCompleteLeft, onCompleteRight }:
                         autoHideDuration={5000}
                         message="Note Deleted"
                         action={action}
-                        style={{ bottom: '155px' }}
+                        style={{ bottom: '215px' }}
                         ContentProps={{
                             sx: {
                                 width: '550px',

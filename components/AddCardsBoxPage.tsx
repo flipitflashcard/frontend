@@ -52,7 +52,7 @@ const AddCardsBoxPage = () => {
     }
 
     const backToHomePage = () => {
-        push('/home');
+        push('/flip');
     }
 
     return (

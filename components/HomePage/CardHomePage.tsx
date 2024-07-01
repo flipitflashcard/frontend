@@ -245,6 +245,33 @@ const CardHomePage = () => {
         }
     }
 
+    const addFlipItOption = () => {
+        const designNavbarElement = document.querySelector('.design-navbar');
+
+        if (designNavbarElement && !document.querySelector('.flip-it-box')) {
+            const newCardsBoxElement = document.createElement('div');
+            newCardsBoxElement.className = 'flip-it-box';
+            newCardsBoxElement.innerHTML = `
+        <button class='btn-flip-it'>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20.1642 7.16045L6.54645 7.16045" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M16.0681 3.08279L20.1648 7.16056L16.0681 11.2383" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3.83289 17.0889H17.4507" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M7.929 21.1666L3.83234 17.0888L7.929 13.011" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+         </svg>
+          Flipit
+        </button>
+      `;
+            const existingSecondChild = designNavbarElement.children[0];
+            designNavbarElement.insertBefore(newCardsBoxElement, existingSecondChild);
+
+            const button = newCardsBoxElement.querySelector('.btn-flip-it');
+            if (button) {
+                button.addEventListener('click', () => push('/card-view/totally'));
+            }
+        }
+    }
+
     const [height, setHeight] = useState<number>(0);
     useEffect(() => {
         const handleResize = () => {
@@ -296,6 +323,7 @@ const CardHomePage = () => {
             }
         ])
         addNewCardsBox();
+        addFlipItOption();
     }, []);
 
     useEffect(() => {
@@ -381,7 +409,7 @@ const CardHomePage = () => {
                     fullWidth
                 />
             </div>
-            <div className='scrollable-div' style={{ overflowY: 'scroll', height: `${height - 300}px` }}>
+            <div className='scrollable-div' style={{ overflowY: 'scroll', height: `${height - 370}px` }}>
                 {
                     filteredOptions.map((item, index) => {
                         return <ListItem

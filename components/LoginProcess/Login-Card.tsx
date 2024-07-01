@@ -76,7 +76,7 @@ const Login_Card = () => {
                 setPasswordError('Password should be no longer than 8 characters.');
             } else {
                 setCookie("token", email);
-                router.push('/home');
+                router.push('/flip');
             }
 
         }

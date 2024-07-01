@@ -14,7 +14,7 @@ const AddCardBox = () => {
     const { push } = useRouter();
 
     const backToHomePage = () => {
-        push('/home');
+        push('/flip');
     }
 
     return (
