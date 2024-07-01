@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 // import components
@@ -43,13 +43,17 @@ const Login = () => {
     // spinner
     const [spinner, setSpinner] = useState<boolean>(true);
 
-    setTimeout(() => {
-        setSpinner(false);
-    }, 3000)
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setSpinner(false);
+        }, 3000);
+
+        // Clean up the timer on component unmount
+        return () => clearTimeout(timer);
+    }, []);
 
     return (
         <div>
-
             <Grid
                 container
                 spacing={2}
@@ -65,10 +69,10 @@ const Login = () => {
                         <Box sx={{ display: 'flex' }} >
                             <Image
                                 className='animation-show-login'
-                                src='./Images/Flipit-Logo-WB.svg'
+                                src='/Images/Flipit-Logo-WB.svg'
                                 width={200}
                                 height={200}
-                                layout='responsive'
+                                priority
                                 alt='spinner'
                             />
                         </Box >
@@ -80,8 +84,6 @@ const Login = () => {
                 }
 
             </Grid>
-
-
         </div>
     )
 }

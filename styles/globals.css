@@ -368,21 +368,51 @@
     border-color: var(--Indigo, #133266);
 }
 
-/* .swiper {
-    width: 240px;
-    height: 320px;
-} */
-
-/* .swiper-slide {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 18px;
-    font-size: 19px;
+.flip-btn {
+    width: 150px;
+    height: 50px;
+    border-radius: 15px;
+    border: 3px;
+    border-bottom-width: 5px;
+    border-color: #133266;
+    border-style: solid;
+    font-size: 18px;
+    color: #133266;
     font-weight: bold;
-    color: #000;
-    background: linear-gradient(#AED6CC, #EFC1C4);
-} */
+}
+
+.forgot-btn {
+    width: 115px;
+    height: 50px;
+    border-radius: 15px;
+    border: 3px;
+    border-bottom-width: 5px;
+    border-color: #133266;
+    border-style: solid;
+    font-size: 15px;
+    color: #133266;
+    font-weight: bold;
+}
+
+.know-btn {
+    width: 115px;
+    height: 50px;
+    border-radius: 15px;
+    border: 3px;
+    border-bottom-width: 5px;
+    border-color: #133266;
+    border-style: solid;
+    font-size: 15px;
+    color: #133266;
+    font-weight: bold;
+    background-color: #EFC1C4;
+}
+
+.flip-btn:hover {
+    transition: all .5 ease-in-out;
+    background-color: #133266;
+    color: #FFFFFF;
+}
 
 .cancel-style {
     width: 100px;
@@ -394,6 +424,15 @@
     border: 3px solid var(--Jet-Stream, #AED6CC);
     color: #AED6CC;
     font-weight: bold;
+}
+
+.type-design {
+    border-radius: 15px;
+    border: 2px solid var(--Indigo, #133266);
+    font-size: 13px;
+    font-weight: bold;
+    padding: 2px;
+    text-align: center;
 }
 
 .discard-style {
@@ -426,6 +465,42 @@
     border: 3px solid var(--Jet-Stream, #EFC1C4);
     color: #EFC1C4;
     font-weight: bold;
+}
+
+.card-container {
+    perspective: 1000px;
+    width: 100%;
+    height: 100%;
+}
+
+.card {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.card.flipped {
+    transform: rotateY(-180deg);
+}
+
+.card-face {
+    position: absolute;
+    width: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #FFFFFF;
+    border-radius: 15px;
+    border: 5px solid var(--Indigo, #133266);
+    padding: 25px;
+}
+
+.card-back {
+    transform: rotateY(180deg);
 }
 
 @keyframes fadeIn {

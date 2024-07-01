@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { GetServerSideProps, GetServerSidePropsContext } from 'next';
+import { useRouter } from 'next/router';
 
 // import MUI Components
 import { Container } from '@mui/material';
@@ -15,26 +16,32 @@ import CardViewPage from '@/components/CardViewPage';
 
 interface Props {
     data: {
-        data: []
+        data: [],
+        title: string
     };
 }
 
 const CardView = ({ data }: Props) => {
+    const { push } = useRouter();
 
     // add context
-    const { cardViewCounter, handleChangeViewCounter } = clickChecking();
+    const { cardViewCounter, setOutCardViewCounter } = clickChecking();
 
-    const nextCard = () => {
-        handleChangeViewCounter();
+    const backToReview = () => {
+        push(`/review/${data.title}`)
     }
+
+    useEffect(() => {
+        setOutCardViewCounter(1);
+    }, [])
 
     return (
         <Layout title='Cards View'>
             <div className='bg-card-title-view'>
                 <Container maxWidth='sm' className='p-3'>
                     <div className='d-flex flex-row align-items-center justify-content-between mt-2'>
-                        <span onClick={nextCard}>
-                            <h2 style={{ color: "white" }}>Done</h2>
+                        <span onClick={backToReview}>
+                            <h2 style={{ color: "white", cursor: 'pointer' }}>Done</h2>
                         </span>
                         <span className='cursor-pointer'>
                             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -47,14 +54,14 @@ const CardView = ({ data }: Props) => {
                     </div>
                     <div className='d-flex flex-row align-items-center justify-content-center mt-4'>
                         <h4 style={{ color: "white" }}>
-                            {cardViewCounter} of {data.data.length}
+                            {cardViewCounter <= data.data.length ? cardViewCounter : data.data.length} of {data.data.length}
                         </h4>
                     </div>
                 </Container>
             </div>
             <div className='bg-card-view-body'>
                 <Container maxWidth='sm' className='p-4'>
-                    <CardViewPage slides={data.data} />
+                    <CardViewPage slides={data.data} title={data.title} />
                 </Container>
             </div>
         </Layout>
@@ -108,7 +115,8 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
     return {
         props: {
             data: {
-                data
+                data,
+                title
             }
         }
     };

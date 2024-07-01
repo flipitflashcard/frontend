@@ -26,7 +26,7 @@ interface Props {
 }
 
 const EditWordsPage = ({ chiocedWord, cardsBox, chiocedCardBox }: Props) => {
-    const { push, asPath } = useRouter();
+    const { push } = useRouter();
 
     // states of edit word
     const [label, setLabel] = useState<string>(chiocedWord.label);
@@ -105,7 +105,11 @@ const EditWordsPage = ({ chiocedWord, cardsBox, chiocedCardBox }: Props) => {
         }
 
         if (!hasError) {
-            push(`/review/${asPath.split('/')[2].split('-')[1]}`);
+            const path = localStorage.getItem('path');
+            if (path) {
+                push(path);
+                localStorage.removeItem('path');
+            }
         }
     };
 

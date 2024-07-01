@@ -102,6 +102,7 @@ const CardReviewPage = ({ cards }: Props) => {
 
     const onEditAction = (id: number | string, label: string, type: string) => {
         push(`/edit-word/${label}-${asPath.split('/')[2]}-${id}`)
+        localStorage.setItem('path', asPath);
     };
 
     return (

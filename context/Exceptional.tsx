@@ -4,7 +4,8 @@ const Exceptional = createContext({
     openEffectCard: false,
     cardViewCounter: 0,
     handleChangeClick: () => { },
-    handleChangeViewCounter: () => { },
+    handleChangeNextViewCounter: () => { },
+    handleChangePrevViewCounter: () => { },
     setOutCardViewCounter: (counter: number) => { }
 })
 
@@ -20,8 +21,12 @@ export function CheckProvider({ children }: PropsWithChildren<{}>) {
         setOpenEffectCard(!openEffectCard);
     }
 
-    function handleChangeViewCounter(): void {
+    function handleChangeNextViewCounter(): void {
         setCardViewCounter(cardViewCounter + 1);
+    }
+
+    function handleChangePrevViewCounter(): void {
+        setCardViewCounter(cardViewCounter - 1);
     }
 
     function setOutCardViewCounter(counter: number) {
@@ -34,7 +39,8 @@ export function CheckProvider({ children }: PropsWithChildren<{}>) {
                 openEffectCard,
                 cardViewCounter,
                 handleChangeClick,
-                handleChangeViewCounter,
+                handleChangeNextViewCounter,
+                handleChangePrevViewCounter,
                 setOutCardViewCounter
             }}
         >
