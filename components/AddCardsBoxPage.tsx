@@ -55,6 +55,10 @@ const AddCardsBoxPage = () => {
         push('/flip');
     }
 
+    const handleSaveChanges = () => {
+        push('/flip');
+    }
+
     return (
         <Fragment>
             <div style={{ height: `${height - 100}px` }}>
@@ -103,6 +107,7 @@ const AddCardsBoxPage = () => {
                                 type="submit"
                                 variant="contained"
                                 className="save-style"
+                                onClick={handleSaveChanges}
                             >
                                 Save
                             </Button>

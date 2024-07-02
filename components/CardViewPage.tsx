@@ -25,16 +25,19 @@ import 'swiper/css/effect-creative';
 // import MUI Components
 import { Box, Button, Grid } from '@mui/material';
 
-interface Props {
-    slides: {
-        label: string,
-        description: string,
-        example: string,
-        type: string,
-        id: number
-    }[],
-    title: string
-}
+
+type Slide = {
+    label: string;
+    description: string;
+    example: string;
+    type: string;
+    id: number;
+};
+
+type Props = {
+    slides: Slide[];
+    title: string;
+};
 
 const CardViewPage = ({ slides, title }: Props) => {
     const { push, asPath } = useRouter();
@@ -61,15 +64,14 @@ const CardViewPage = ({ slides, title }: Props) => {
         };
     }, []);
 
+    /// Handles the slide change event in the Swiper component.
+    /// This function is called whenever the active slide in the Swiper component changes. It updates the `isFlipped` state, calls the appropriate `handleChangeNextViewCounter` or `handleChangePrevViewCounter` function from the `clickChecking` context, and updates the `prevIndex` state.
+    /// @param swiper The Swiper instance that triggered the slide change event.
     const handleSlideChange = (swiper: SwiperType) => {
         const currentIndex = swiper.activeIndex;
-        if (currentIndex > prevIndex) {
-            setIsFlipped(false);
-            handleChangeNextViewCounter();
-        } else {
-            if (isFlipped) setIsFlipped(false);
-            handleChangePrevViewCounter();
-        }
+        const isNext = currentIndex > prevIndex;
+        setIsFlipped(false);
+        isNext ? handleChangeNextViewCounter() : handleChangePrevViewCounter();
         setPrevIndex(currentIndex);
     };
 

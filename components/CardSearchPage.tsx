@@ -1,3 +1,10 @@
+/**
+ * CardSearchPage component that displays a search input with autocomplete functionality.
+ * It includes state management for search input, focus handling, and dynamic height adjustment.
+ * Utilizes Material-UI components like Autocomplete, TextField, keyframes, and Box.
+ * Displays a list of top films and a set of cards with word details.
+ */
+
 import React, { useState, Fragment, useEffect } from 'react';
 
 // import MUI Components

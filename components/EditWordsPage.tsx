@@ -1,7 +1,5 @@
-import React, { useState, Fragment, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { useRouter } from 'next/router';
-
-// import MUI Components
 import { TextField, FormControl, Box, FormHelperText, Select, MenuItem } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material';
 
@@ -27,22 +25,20 @@ interface Props {
 
 const EditWordsPage = ({ chiocedWord, cardsBox, chiocedCardBox }: Props) => {
     const { push } = useRouter();
-
-    // states of edit word
-    const [label, setLabel] = useState<string>(chiocedWord.label);
-    const [labelError, setLabelError] = useState<string>('');
-
-    const [type, setType] = useState<string>(chiocedWord.type);
-    const [typeError, setTypeError] = useState<boolean>(false);
-
-    const [description, setDescription] = useState<string>(chiocedWord.description);
-    const [descriptionError, setDescriptionError] = useState<string>('');
-
-    const [example, setExample] = useState<string>(chiocedWord.example);
-    const [exampleError, setExampleError] = useState<string>('');
-
-    const [cardBox, setCardBox] = useState<string>(chiocedCardBox.label);
-    const [cardBoxError, setCardBoxError] = useState<boolean>(false);
+    const [formState, setFormState] = useState({
+        label: chiocedWord.label,
+        type: chiocedWord.type,
+        description: chiocedWord.description,
+        example: chiocedWord.example,
+        cardBox: chiocedCardBox.label,
+    });
+    const [errors, setErrors] = useState({
+        label: '',
+        type: false,
+        description: '',
+        example: '',
+        cardBox: false,
+    });
 
     const [height, setHeight] = useState<number>(0);
     useEffect(() => {
@@ -57,54 +53,61 @@ const EditWordsPage = ({ chiocedWord, cardsBox, chiocedCardBox }: Props) => {
     }, []);
 
     const handleChangeType = (event: SelectChangeEvent) => {
-        setType(event.target.value as string);
+        setFormState((prevState) => ({ ...prevState, type: event.target.value as string }));
     };
 
     const handleChangeBox = (event: SelectChangeEvent) => {
-        setCardBox(event.target.value as string);
+        setFormState((prevState) => ({ ...prevState, cardBox: event.target.value as string }));
+    };
+
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = event.target;
+        setFormState((prevState) => ({ ...prevState, [name]: value }));
+    };
+
+    const validateForm = () => {
+        let hasError = false;
+        const newErrors = {
+            label: '',
+            type: false,
+            description: '',
+            example: '',
+            cardBox: false,
+        };
+
+        if (formState.label === '') {
+            newErrors.label = 'Word is required!';
+            hasError = true;
+        }
+
+        if (formState.type === '') {
+            newErrors.type = true;
+            hasError = true;
+        }
+
+        if (formState.description === '') {
+            newErrors.description = 'Description is required!';
+            hasError = true;
+        }
+
+        if (formState.example === '') {
+            newErrors.example = 'Example is required!';
+            hasError = true;
+        }
+
+        if (formState.cardBox === '') {
+            newErrors.cardBox = true;
+            hasError = true;
+        }
+
+        setErrors(newErrors);
+        return !hasError;
     };
 
     const handleSaveChanges = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        let hasError = false;
-
-        if (label === "") {
-            setLabelError('Word is required!');
-            hasError = true;
-        } else {
-            setLabelError('');
-        }
-
-        if (type === "") {
-            setTypeError(true);
-            hasError = true;
-        } else {
-            setTypeError(false);
-        }
-
-        if (description === "") {
-            setDescriptionError('Description is required!');
-            hasError = true;
-        } else {
-            setDescriptionError('');
-        }
-
-        if (example === "") {
-            setExampleError('Example is required!');
-            hasError = true;
-        } else {
-            setExampleError('');
-        }
-
-        if (cardBox === "") {
-            setCardBoxError(true);
-            hasError = true;
-        } else {
-            setCardBoxError(false);
-        }
-
-        if (!hasError) {
+        if (validateForm()) {
             const path = localStorage.getItem('path');
             if (path) {
                 push(path);
@@ -152,7 +155,7 @@ const EditWordsPage = ({ chiocedWord, cardsBox, chiocedCardBox }: Props) => {
             <Box component="form" onSubmit={handleSaveChanges} noValidate sx={{ overflowY: 'scroll', height: `${height - 220}px` }} display='flex' flexDirection="column" className='scrollable-div'>
                 <FormControl fullWidth>
                     <TextField
-                        value={label}
+                        value={formState.label}
                         placeholder='Enter The Word...'
                         margin="normal"
                         required
@@ -177,9 +180,9 @@ const EditWordsPage = ({ chiocedWord, cardsBox, chiocedCardBox }: Props) => {
                                 fontSize: '12pt'
                             },
                         }}
-                        onChange={(e) => setLabel(e.target.value)}
-                        error={!!labelError}
-                        helperText={labelError}
+                        onChange={handleInputChange}
+                        error={!!errors.label}
+                        helperText={errors.label}
                         sx={{ border: 'none', "& fieldset": { border: 'none' }, }}
                     />
                 </FormControl>
@@ -190,7 +193,7 @@ const EditWordsPage = ({ chiocedWord, cardsBox, chiocedCardBox }: Props) => {
                     <Select
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
-                        value={type}
+                        value={formState.type}
                         label="Type"
                         onChange={handleChangeType}
                         sx={{
@@ -216,7 +219,7 @@ const EditWordsPage = ({ chiocedWord, cardsBox, chiocedCardBox }: Props) => {
                         <MenuItem value='Adjective'>Adjective</MenuItem>
                         <MenuItem value='Adverb'>Adverb</MenuItem>
                     </Select>
-                    {typeError ? (
+                    {errors.type ? (
                         <FormHelperText
                             sx={{
                                 color: 'var(--Indigo, #ef3427)',
@@ -238,8 +241,9 @@ const EditWordsPage = ({ chiocedWord, cardsBox, chiocedCardBox }: Props) => {
                         maxRows={4}
                         minRows={4}
                         inputProps={{ maxLength: 250 }}
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
+                        value={formState.description}
+                        name="description"
+                        onChange={handleInputChange}
                         InputProps={{
                             sx: {
                                 borderRadius: '10px',
@@ -253,8 +257,8 @@ const EditWordsPage = ({ chiocedWord, cardsBox, chiocedCardBox }: Props) => {
                                 fontSize: '12pt'
                             },
                         }}
-                        error={!!descriptionError}
-                        helperText={descriptionError}
+                        error={!!errors.description}
+                        helperText={errors.description}
                     />
                 </FormControl>
 
@@ -266,8 +270,9 @@ const EditWordsPage = ({ chiocedWord, cardsBox, chiocedCardBox }: Props) => {
                         maxRows={2}
                         minRows={2}
                         inputProps={{ maxLength: 125 }}
-                        value={example}
-                        onChange={(e) => setExample(e.target.value)}
+                        value={formState.example}
+                        name="example"
+                        onChange={handleInputChange}
                         InputProps={{
                             sx: {
                                 borderRadius: '10px',
@@ -281,8 +286,8 @@ const EditWordsPage = ({ chiocedWord, cardsBox, chiocedCardBox }: Props) => {
                                 fontSize: '12pt'
                             },
                         }}
-                        error={!!exampleError}
-                        helperText={exampleError}
+                        error={!!errors.example}
+                        helperText={errors.example}
                     />
                 </FormControl>
 
@@ -290,7 +295,7 @@ const EditWordsPage = ({ chiocedWord, cardsBox, chiocedCardBox }: Props) => {
                     <Select
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
-                        value={cardBox}
+                        value={formState.cardBox}
                         label="Age"
                         onChange={handleChangeBox}
                         sx={{
@@ -314,7 +319,7 @@ const EditWordsPage = ({ chiocedWord, cardsBox, chiocedCardBox }: Props) => {
                             <MenuItem key={item.id} value={item.label}>{item.label}</MenuItem>
                         ))}
                     </Select>
-                    {cardBoxError ? (
+                    {errors.cardBox ? (
                         <FormHelperText
                             sx={{
                                 color: 'var(--Indigo, #ef3427)',
@@ -334,3 +339,4 @@ const EditWordsPage = ({ chiocedWord, cardsBox, chiocedCardBox }: Props) => {
 }
 
 export default EditWordsPage;
+
