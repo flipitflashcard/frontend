@@ -43,11 +43,11 @@ const AddCardsBoxPage = () => {
 
     const handleAddNewCard = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (topic === "") {
+        const sanitizedTopic = topic.trim();
+        if (sanitizedTopic === "") {
             setTopicError('Name is required!');
         } else {
             setTopicError('');
-
         }
     }
 
@@ -121,3 +121,4 @@ const AddCardsBoxPage = () => {
 }
 
 export default AddCardsBoxPage;
+
