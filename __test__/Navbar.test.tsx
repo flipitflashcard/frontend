@@ -22,7 +22,7 @@ describe('Navbar', () => {
 
         expect(screen.getByRole('link', { name: /setting/i })).toBeInTheDocument();
         expect(screen.getByRole('link', { name: /add word/i })).toBeInTheDocument();
-        expect(screen.getByRole('link', { name: /home/i })).toBeInTheDocument();
+        expect(screen.getByRole('link', { name: /flip/i })).toBeInTheDocument();
         expect(screen.getByRole('link', { name: /search/i })).toBeInTheDocument();
     });
 
@@ -31,7 +31,7 @@ describe('Navbar', () => {
 
         const settingIcon = screen.getByRole('link', { name: /setting/i }).querySelector('g');
         const addWordIcon = screen.getByRole('link', { name: /add word/i }).querySelector('g');
-        const homeIcon = screen.getByRole('link', { name: /home/i }).querySelector('g');
+        const homeIcon = screen.getByRole('link', { name: /flip/i }).querySelector('g');
         const searchIcon = screen.getByRole('link', { name: /search/i }).querySelector('g');
 
         expect(settingIcon).toHaveAttribute('opacity', '0.5');

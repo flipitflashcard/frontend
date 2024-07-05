@@ -37,7 +37,7 @@ const Navbar = () => {
                     </Link>
                 </li>
                 <li>
-                    <Link href='/flip' aria-label='Home'>
+                    <Link href='/flip' aria-label='Flip'>
                         <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <g opacity={currentPath !== '/flip' ? "0.5" : ""}>
                                 <path fillRule="evenodd" clipRule="evenodd" d="M4 8.66667C4 5.16638 4.03748 4 8.66667 4C13.2959 4 13.3333 5.16638 13.3333 8.66667C13.3333 12.167 13.3481 13.3333 8.66667 13.3333C3.98524 13.3333 4 12.167 4 8.66667Z" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
