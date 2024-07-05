@@ -68,7 +68,7 @@ describe('AddCardsBoxPage', () => {
         const discardButton = screen.getByRole('button', { name: /discard/i });
         fireEvent.click(discardButton);
 
-        expect(push).toHaveBeenCalledWith('/home');
+        expect(push).toHaveBeenCalledWith('/flip');
     });
 
     it('updates topic state when typing in the input field', () => {

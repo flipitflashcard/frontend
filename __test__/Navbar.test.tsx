@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar';
 // Mock the useRouter hook
 jest.mock('next/router', () => ({
     useRouter: () => ({
-        asPath: '/home',
+        asPath: '/flip',
     }),
 }));
 
