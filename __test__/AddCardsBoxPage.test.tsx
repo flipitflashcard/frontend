@@ -1,19 +1,16 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import AddWordsPage from '../components/AddWordsPage';
-import { useRouter } from 'next/router';
+import AddCardsBoxPage from '../components/AddCardsBoxPage';
 
+// Mock the useRouter hook
 jest.mock('next/router', () => ({
-    useRouter: jest.fn(),
+    useRouter: () => ({
+        push: jest.fn(),
+    }),
 }));
 
-const mockCardsBox = [
-    { label: 'Box 1', number: 1, id: 1 },
-    { label: 'Box 2', number: 2, id: 2 },
-];
-
-describe('AddWordsPage', () => {
+describe('AddCardsBoxPage', () => {
     beforeEach(() => {
         // Mock window.innerHeight
         Object.defineProperty(window, 'innerHeight', {
@@ -31,81 +28,55 @@ describe('AddWordsPage', () => {
     });
 
     it('renders the component correctly', () => {
-        render(<AddWordsPage cardsBox={mockCardsBox} />);
+        render(<AddCardsBoxPage />);
 
-        expect(screen.getByPlaceholderText('Enter The Word...')).toBeInTheDocument();
-        expect(screen.getByPlaceholderText('Enter the Description...')).toBeInTheDocument();
-        expect(screen.getByPlaceholderText('Enter the Example...')).toBeInTheDocument();
-        expect(screen.getByLabelText('Select Tag')).toBeInTheDocument();
-        expect(screen.getByLabelText('Search for Box Cards')).toBeInTheDocument();
+        expect(screen.getByPlaceholderText('Enter The name...')).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /discard/i })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument();
     });
 
-    it('displays error messages when required fields are empty', () => {
-        render(<AddWordsPage cardsBox={mockCardsBox} />);
+    it('displays error message when submitting empty topic', () => {
+        render(<AddCardsBoxPage />);
 
-        const form = screen.getByTestId('add-words-form');
-        fireEvent.submit(form);
+        const saveButton = screen.getByRole('button', { name: /save/i });
+        fireEvent.click(saveButton);
 
-        expect(screen.getByText('Word is required!')).toBeInTheDocument();
-        expect(screen.getByText('Description is required!')).toBeInTheDocument();
-        expect(screen.getByText('Example is required!')).toBeInTheDocument();
-        expect(screen.getByText('Please select a type')).toBeInTheDocument();
-        expect(screen.getByText('Please select a Card Box')).toBeInTheDocument();
+        expect(screen.getByText('Name is required!')).toBeInTheDocument();
     });
 
-    it('clears error messages when entering valid data', () => {
-        render(<AddWordsPage cardsBox={mockCardsBox} />);
+    it('clears error message when entering a topic', () => {
+        render(<AddCardsBoxPage />);
 
-        const form = screen.getByTestId('add-words-form');
-        fireEvent.submit(form);
+        const saveButton = screen.getByRole('button', { name: /save/i });
+        fireEvent.click(saveButton);
 
-        const wordInput = screen.getByPlaceholderText('Enter The Word...');
-        const descriptionInput = screen.getByPlaceholderText('Enter the Description...');
-        const exampleInput = screen.getByPlaceholderText('Enter the Example...');
-        const typeSelect = screen.getByLabelText('Select Tag');
-        const cardBoxSelect = screen.getByLabelText('Search for Box Cards');
+        const inputField = screen.getByPlaceholderText('Enter The name...');
+        fireEvent.change(inputField, { target: { value: 'Test Topic' } });
+        fireEvent.click(saveButton);
 
-        fireEvent.change(wordInput, { target: { value: 'Test Word' } });
-        fireEvent.change(descriptionInput, { target: { value: 'Test Description' } });
-        fireEvent.change(exampleInput, { target: { value: 'Test Example' } });
-        fireEvent.change(typeSelect, { target: { value: 'Verb' } });
-        fireEvent.change(cardBoxSelect, { target: { value: 'Box 1' } });
-
-        fireEvent.submit(form);
-
-        expect(screen.queryByText('Word is required!')).not.toBeInTheDocument();
-        expect(screen.queryByText('Description is required!')).not.toBeInTheDocument();
-        expect(screen.queryByText('Example is required!')).not.toBeInTheDocument();
-        expect(screen.queryByText('Please select a type')).not.toBeInTheDocument();
-        expect(screen.queryByText('Please select a Card Box')).not.toBeInTheDocument();
+        expect(screen.queryByText('Name is required!')).not.toBeInTheDocument();
     });
 
-    it('updates state when typing in the input fields', () => {
-        render(<AddWordsPage cardsBox={mockCardsBox} />);
+    it('calls router.push when clicking Discard button', () => {
+        const push = jest.fn();
+        jest.spyOn(require('next/router'), 'useRouter').mockImplementation(() => ({
+            push,
+        }));
 
-        const wordInput = screen.getByPlaceholderText('Enter The Word...');
-        const descriptionInput = screen.getByPlaceholderText('Enter the Description...');
-        const exampleInput = screen.getByPlaceholderText('Enter the Example...');
+        render(<AddCardsBoxPage />);
 
-        fireEvent.change(wordInput, { target: { value: 'Test Word' } });
-        fireEvent.change(descriptionInput, { target: { value: 'Test Description' } });
-        fireEvent.change(exampleInput, { target: { value: 'Test Example' } });
+        const discardButton = screen.getByRole('button', { name: /discard/i });
+        fireEvent.click(discardButton);
 
-        expect(wordInput).toHaveValue('Test Word');
-        expect(descriptionInput).toHaveValue('Test Description');
-        expect(exampleInput).toHaveValue('Test Example');
+        expect(push).toHaveBeenCalledWith('/flip');
     });
 
-    it('updates type and cardBox state when selecting from dropdowns', () => {
-        render(<AddWordsPage cardsBox={mockCardsBox} />);
+    it('updates topic state when typing in the input field', () => {
+        render(<AddCardsBoxPage />);
 
-        const typeSelect = screen.getByLabelText('Select Tag');
-        const cardBoxSelect = screen.getByLabelText('Search for Box Cards');
+        const inputField = screen.getByPlaceholderText('Enter The name...');
+        fireEvent.change(inputField, { target: { value: 'New Topic' } });
 
-        fireEvent.change(typeSelect, { target: { value: 'Verb' } });
-        fireEvent.change(cardBoxSelect, { target: { value: 'Box 1' } });
-
-        expect(typeSelect).toHaveValue('Verb');
-        expect(cardBoxSelect).toHaveValue('Box 1');
+        expect(inputField).toHaveValue('New Topic');
     });
 });
