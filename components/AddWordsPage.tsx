@@ -11,7 +11,6 @@ interface Props {
         number: number,
         id: number
     }[],
-
 }
 
 const AddWordsPage = ({ cardsBox }: Props) => {
@@ -136,7 +135,7 @@ const AddWordsPage = ({ cardsBox }: Props) => {
 
     return (
         <Fragment>
-            <Box component="form" onSubmit={handleSaveChanges} noValidate sx={{ overflowY: 'scroll', height: `${height - 220}px` }} display='flex' flexDirection="column" className='scrollable-div'>
+            <Box component="form" role='form' data-testid="add-words-form" onSubmit={handleSaveChanges} noValidate sx={{ overflowY: 'scroll', height: `${height - 220}px` }} display='flex' flexDirection="column" className='scrollable-div'>
                 <FormControl fullWidth>
                     <TextField
                         value={label}
@@ -182,6 +181,7 @@ const AddWordsPage = ({ cardsBox }: Props) => {
                         onChange={handleChangeType}
                         defaultValue='nothing'
                         displayEmpty
+                        aria-label="Select Tag"
                         sx={{
                             backgroundColor: '#ffffff',
                             borderRadius: '50px',
@@ -286,6 +286,7 @@ const AddWordsPage = ({ cardsBox }: Props) => {
                         label="Age"
                         onChange={handleChangeBox}
                         displayEmpty
+                        aria-label="Search for Box Cards"
                         sx={{
                             backgroundColor: '#EFC1C4',
                             borderRadius: '50px',

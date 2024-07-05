@@ -34,3 +34,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# jest test (unit test)
+# global.d.ts
+# jest.config.js
+# jest.setup.js
+# .babelrc
+
