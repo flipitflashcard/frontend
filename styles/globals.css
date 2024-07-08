@@ -1,5 +1,15 @@
+@font-face {
+    font-family: 'VarelaRound';
+    src: url('fonts/VarelaRound-Regular.ttf') format('ttf');
+}
+
+@font-face {
+    font-family: 'PermanentMarker';
+    src: url('fonts/PermanentMarker-Regular.ttf') format('ttf');
+}
+
 * {
-    font-family: cursive !important;
+    font-family: PermanentMarker;
 }
 
 .bg-main {
