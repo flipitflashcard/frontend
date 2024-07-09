@@ -23,7 +23,7 @@ function Copyright() {
                 align="center"
                 className='mt-5'
             >
-                FliIt
+                FlipIt
             </Typography>
             <Typography variant="body2"
                 color="#133266"
