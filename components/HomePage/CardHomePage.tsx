@@ -409,7 +409,7 @@ const CardHomePage = () => {
                     fullWidth
                 />
             </div>
-            <div className='scrollable-div' style={{ overflowY: 'scroll', height: `${height - 370}px` }}>
+            <div className='scrollable-div' style={{ overflowY: 'scroll', height: `${height - 381}px` }}>
                 {
                     filteredOptions.map((item, index) => {
                         return <ListItem

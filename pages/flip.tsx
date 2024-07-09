@@ -14,7 +14,7 @@ const home = () => {
         <Layout title='Cards Box'>
             <main className='bg-home'>
                 <Container maxWidth='sm' className='p-4'>
-                    <h2 className='fw-bold' style={{ color: '#133266' }}>
+                    <h2 className='fw-bold' style={{ color: '#133266', fontSize: '35pt' }}>
                         Cards Box
                     </h2>
                     <CardHomePage />

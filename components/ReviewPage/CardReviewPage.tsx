@@ -161,7 +161,7 @@ const CardReviewPage = ({ cards }: Props) => {
                     fullWidth
                 />
             </div>
-            <div className='scrollable-div' style={{ overflowY: 'scroll', height: `${height - 250}px` }}>
+            <div className='scrollable-div' style={{ overflowY: 'scroll', height: `${height - 255}px` }}>
                 {
                     filteredOptions.map((item, index) => {
                         return <ListItemBox

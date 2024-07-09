@@ -77,7 +77,7 @@ const CardViewPage = ({ slides, title }: Props) => {
 
     return (
         <Fragment>
-            <div style={{ height: `${height - 180}px` }} className='d-flex align-items-center'>
+            <div style={{ height: `${height - 120}px` }} className='d-flex align-items-center'>
                 <Swiper
                     ref={swiperRef}
                     grabCursor={true}

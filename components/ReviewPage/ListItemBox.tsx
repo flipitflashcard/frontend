@@ -124,7 +124,7 @@ const ListItemBox = ({ id, index, label, type, description, example, onDeleteAct
 
     return (
         <Fragment>
-            <div className="list-item" style={index !== 0 ? { margin: '30px 0' } : { marginTop: '0' }} /*onClick={() => goToReviewPage(label)}*/>
+            <div className="list-item" style={index !== 0 ? { margin: '40px 0' } : { marginTop: '0' }} /*onClick={() => goToReviewPage(label)}*/>
                 <div className='card-global-page-review mt-4' ref={ref}>
                     <div className='d-flex fex-row align-items-center'>
                         <h3 className='me-3 fw-bold'>{label}</h3>

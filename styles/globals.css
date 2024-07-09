@@ -1,15 +1,23 @@
 @font-face {
     font-family: 'VarelaRound';
-    src: url('fonts/VarelaRound-Regular.ttf') format('ttf');
+    src: url('fonts/VarelaRound-Regular.ttf') format('truetype');
 }
 
 @font-face {
-    font-family: 'PermanentMarker';
-    src: url('fonts/PermanentMarker-Regular.ttf') format('ttf');
+    font-family: 'ConcertOne';
+    src: url('fonts/ConcertOne-Regular.ttf') format('truetype');
 }
 
 * {
-    font-family: PermanentMarker;
+    font-family: 'VarelaRound';
+}
+
+h2 {
+    font-family: 'ConcertOne';
+}
+
+h3 {
+    /* font-family: 'ConcertOne'; */
 }
 
 .bg-main {

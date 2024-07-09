@@ -19,7 +19,7 @@ const Search = ({ data }: Props) => {
         <Layout title='Search'>
             <main className='bg-search'>
                 <Container maxWidth='sm' className='p-4'>
-                    <h2 className='fw-bold' style={{ color: '#133266' }}>
+                    <h2 className='fw-bold' style={{ color: '#133266', fontSize: '35pt' }}>
                         Search
                     </h2>
                     <CardReviewPage cards={data.data} />

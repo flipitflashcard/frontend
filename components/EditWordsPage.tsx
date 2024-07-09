@@ -152,7 +152,7 @@ const EditWordsPage = ({ chiocedWord, cardsBox, chiocedCardBox }: Props) => {
 
     return (
         <Fragment>
-            <Box component="form" onSubmit={handleSaveChanges} noValidate sx={{ overflowY: 'scroll', height: `${height - 220}px` }} display='flex' flexDirection="column" className='scrollable-div'>
+            <Box component="form" onSubmit={handleSaveChanges} noValidate sx={{ overflowY: 'scroll', height: `${height - 240}px` }} display='flex' flexDirection="column" className='scrollable-div'>
                 <FormControl fullWidth>
                     <TextField
                         value={formState.label}

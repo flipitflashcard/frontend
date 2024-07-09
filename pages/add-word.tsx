@@ -26,7 +26,7 @@ const AddWord = ({ data }: Props) => {
             <main className='bg-edit'>
                 <Container maxWidth='sm' className='p-4'>
                     <div className='d-flex flex-row align-items-center'>
-                        <h2 className='fw-bold ms-4' style={{ color: '#133266' }}>
+                        <h2 className='fw-bold' style={{ color: '#133266', fontSize: '35pt' }}>
                             Add Word
                         </h2>
                     </div>

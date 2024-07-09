@@ -12,13 +12,13 @@ const Setting = () => {
         <Layout title='Setting'>
             <main className='bg-setting'>
                 <Container maxWidth='xs' className='p-5'>
-                    <h2 className='fw-bold' style={{ color: '#133266' }}>
-                        Setting
-                    </h2>
-                    <SettingStructure />
-                </Container>
-            </main>
-        </Layout>
+                    <h2 className='fw-bold' style={{ color: '#133266', fontSize: '35pt' }}>
+                    Setting
+                </h2>
+                <SettingStructure />
+            </Container>
+        </main>
+        </Layout >
     )
 }
 

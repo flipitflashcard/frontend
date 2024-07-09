@@ -135,7 +135,7 @@ const AddWordsPage = ({ cardsBox }: Props) => {
 
     return (
         <Fragment>
-            <Box component="form" role='form' data-testid="add-words-form" onSubmit={handleSaveChanges} noValidate sx={{ overflowY: 'scroll', height: `${height - 220}px` }} display='flex' flexDirection="column" className='scrollable-div'>
+            <Box component="form" role='form' data-testid="add-words-form" onSubmit={handleSaveChanges} noValidate sx={{ overflowY: 'scroll', height: `${height - 200}px` }} display='flex' flexDirection="column" className='scrollable-div'>
                 <FormControl fullWidth>
                     <TextField
                         value={label}

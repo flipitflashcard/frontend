@@ -52,7 +52,7 @@ const EditWord = ({ data }: Props) => {
                                 <path d="M15.5703 20.9972L10.5516 15.9998L15.5703 11.0025" stroke="#133266" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                         </span>
-                        <h2 className='fw-bold ms-4' style={{ color: '#133266' }}>
+                        <h2 className='fw-bold ms-4' style={{ color: '#133266', fontSize: '35pt' }}>
                             Edit Word
                         </h2>
                     </div>
