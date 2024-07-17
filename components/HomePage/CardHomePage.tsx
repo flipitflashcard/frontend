@@ -1,8 +1,15 @@
-import React, { useState, Fragment, useEffect } from 'react';
+import React, { useState, Fragment, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 
 // import MUI Components
-import { TextField, Autocomplete, keyframes, Box, Modal, Grid, Button, Snackbar } from '@mui/material';
+import {
+    TextField,
+    Autocomplete,
+    keyframes,
+    Box,
+    Modal
+} from '@mui/material';
 
 // import context
 import { clickChecking } from '@/context/Exceptional';
@@ -11,16 +18,15 @@ import { clickChecking } from '@/context/Exceptional';
 import EffectiveCard from '../EffectiveCard';
 import ListItem from './ListItem';
 
+// import SVG
+import searchInput from '@/public/Icons/search-input.svg';
+
+// import styles
 const shakeLabel = keyframes`
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-  100% {
-    transform: translateY(0);
-  }`;
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
+`;
 
 const EffectStyle = {
     position: "absolute" as "absolute",
@@ -34,18 +40,6 @@ const EffectStyle = {
     p: 4,
 };
 
-const NewCardStyle = {
-    position: "absolute" as "absolute",
-    top: "50%",
-    left: "50%",
-    width: 300,
-    transform: "translate(-50%, -50%)",
-    bgcolor: "#AEBED6",
-    border: "3px solid #133266",
-    borderRadius: "15px",
-    p: 4,
-};
-
 type Value = {
     label: string,
     number: number,
@@ -54,25 +48,88 @@ type Value = {
 
 const CardHomePage = () => {
     const { push } = useRouter();
-
-    // add context
     const { openEffectCard, handleChangeClick } = clickChecking();
 
-    // state of search
-    const [search, setSearch] = useState<undefined | string>(undefined);
-
+    const [search, setSearch] = useState<string | undefined>(undefined);
     const [isFocused, setIsFocused] = useState<boolean>(false);
-    const [isNewCardOpen, setIsNewCardOpen] = useState<boolean>(false);
-
-    // state of new card 
-    const [topic, setTopic] = useState<string>('');
-
-    // import state of state of new card validation 
-    const [topicError, setTopicError] = useState<string>('');
-
-    // state of data
     const [card, setCard] = useState<Value[]>([]);
     const [filteredOptions, setFilteredOptions] = useState<Value[]>([]);
+    const [height, setHeight] = useState<number>(0);
+
+    const handleChange = useCallback((event: React.SyntheticEvent<Element, Event>, value: string | Value | null) => {
+        setSearch(typeof value === 'string' || value === null ? undefined : value.label);
+    }, []);
+
+    const addNewCardsBox = useCallback(() => {
+        const designNavbarElement = document.querySelector('.design-navbar');
+        if (designNavbarElement && !document.querySelector('.new-cards-box')) {
+            const newCardsBoxElement = document.createElement('div');
+            newCardsBoxElement.className = 'new-cards-box';
+            newCardsBoxElement.innerHTML = `
+            <button class='btn-new-cards-box'>
+                <Image priority src="/Icons/paper-plus.svg" alt="paper-plus" width={24} height={24} />
+                New Cards Box
+            </button>
+        `;
+            designNavbarElement.insertBefore(newCardsBoxElement, designNavbarElement.firstChild);
+            newCardsBoxElement.querySelector('.btn-new-cards-box')?.addEventListener('click', () => push('/add-card-box'));
+        }
+    }, [push]);
+
+    const addFlipItOption = useCallback(() => {
+        const designNavbarElement = document.querySelector('.design-navbar');
+        if (designNavbarElement && !document.querySelector('.flip-it-box')) {
+            const newCardsBoxElement = document.createElement('div');
+            newCardsBoxElement.className = 'flip-it-box';
+            newCardsBoxElement.innerHTML = `
+            <button class='btn-flip-it'>
+                <Image priority src="/Icons/swap-left.svg" alt="swap" width={24} height={24} />
+                Flipit
+            </button>
+      `;
+            designNavbarElement.insertBefore(newCardsBoxElement, designNavbarElement.firstChild);
+            newCardsBoxElement.querySelector('.btn-flip-it')?.addEventListener('click', () => push('/card-view/totally'));
+        }
+    }, [push]);
+
+    useEffect(() => {
+        const handleResize = () => setHeight(window.innerHeight);
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    useEffect(() => {
+        setCard([
+            { label: 'Common Verbs', number: 253, id: 1 },
+            { label: 'Dommon Verbs', number: 300, id: 2 },
+            { label: 'Xommon Verbs', number: 265, id: 3 },
+            { label: 'Aommon Verbs', number: 265, id: 4 },
+            { label: 'Wommon Verbs', number: 265, id: 5 },
+            { label: 'Rommon Verbs', number: 265, id: 6 },
+            { label: 'Tommon Verbs', number: 265, id: 7 }
+        ]);
+        addNewCardsBox();
+        addFlipItOption();
+    }, [addNewCardsBox, addFlipItOption]);
+
+    useEffect(() => {
+        setFilteredOptions(card.filter(option =>
+            option.label.toLowerCase().includes((search || '').toLowerCase())
+        ));
+    }, [search, card]);
+
+    const handleFocus = () => setIsFocused(true);
+    const handleBlur = () => setIsFocused(false);
+
+    const onCompleteLeft = useCallback((id: number | string) => {
+        setFilteredOptions(currentItems => currentItems.filter(i => i.id !== id));
+        setCard(currentItems => currentItems.filter(i => i.id !== id));
+    }, []);
+
+    const onCompleteRight = useCallback(() => {
+        handleChangeClick();
+    }, [handleChangeClick]);
 
     const top100Films = [
         { label: 'The Shawshank Redemption', year: 1994 },
@@ -201,158 +258,6 @@ const CardHomePage = () => {
         { label: 'Monty Python and the Holy Grail', year: 1975 },
     ];
 
-    const handleChange = (event: React.SyntheticEvent<Element, Event>, value: string | Value | null) => {
-        (typeof value === 'string' || value === null) ? setSearch(undefined) : setSearch(value.label);
-    };
-
-    const handleAddNewCard = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        if (topic === "") {
-            setTopicError('Topic is required!');
-        } else {
-            setTopicError('');
-            const newCard = { label: topic, number: card.length + 1, id: card.length + 1 };
-            setCard([...card, newCard]);
-            setTopic('');
-            setIsNewCardOpen(false);
-        }
-    }
-
-    const addNewCardsBox = () => {
-        const designNavbarElement = document.querySelector('.design-navbar');
-
-        if (designNavbarElement && !document.querySelector('.new-cards-box')) {
-            const newCardsBoxElement = document.createElement('div');
-            newCardsBoxElement.className = 'new-cards-box';
-            newCardsBoxElement.innerHTML = `
-        <button class='btn-new-cards-box'>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M14.7366 2.7619H8.08461C6.00461 2.7539 4.29961 4.4109 4.25061 6.4909V17.3399C4.21561 19.3899 5.84861 21.0809 7.89961 21.1169C7.96061 21.1169 8.02261 21.1169 8.08461 21.1149H16.0726C18.1416 21.0939 19.8056 19.4089 19.8026 17.3399V8.0399L14.7366 2.7619Z" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M14.4743 2.75011V5.65911C14.4743 7.07911 15.6233 8.23011 17.0433 8.23411H19.7973" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M14.2937 12.9142H9.39371" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M11.8445 15.3639V10.4639" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-          New Cards Box
-        </button>
-      `;
-            const existingSecondChild = designNavbarElement.children[0];
-            designNavbarElement.insertBefore(newCardsBoxElement, existingSecondChild);
-
-            const button = newCardsBoxElement.querySelector('.btn-new-cards-box');
-            if (button) {
-                button.addEventListener('click', () => push('/add-card-box'));
-            }
-        }
-    }
-
-    const addFlipItOption = () => {
-        const designNavbarElement = document.querySelector('.design-navbar');
-
-        if (designNavbarElement && !document.querySelector('.flip-it-box')) {
-            const newCardsBoxElement = document.createElement('div');
-            newCardsBoxElement.className = 'flip-it-box';
-            newCardsBoxElement.innerHTML = `
-        <button class='btn-flip-it'>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20.1642 7.16045L6.54645 7.16045" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M16.0681 3.08279L20.1648 7.16056L16.0681 11.2383" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M3.83289 17.0889H17.4507" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M7.929 21.1666L3.83234 17.0888L7.929 13.011" stroke="#133266" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-         </svg>
-          Flipit
-        </button>
-      `;
-            const existingSecondChild = designNavbarElement.children[0];
-            designNavbarElement.insertBefore(newCardsBoxElement, existingSecondChild);
-
-            const button = newCardsBoxElement.querySelector('.btn-flip-it');
-            if (button) {
-                button.addEventListener('click', () => push('/card-view/totally'));
-            }
-        }
-    }
-
-    const [height, setHeight] = useState<number>(0);
-    useEffect(() => {
-        const handleResize = () => {
-            setHeight(window.innerHeight);
-        };
-        handleResize();
-        window.addEventListener('resize', handleResize);
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, []);
-
-    useEffect(() => {
-        setCard([
-            {
-                label: 'Common Verbs',
-                number: 253,
-                id: 1
-            },
-            {
-                label: 'Dommon Verbs',
-                number: 300,
-                id: 2
-            },
-            {
-                label: 'Xommon Verbs',
-                number: 265,
-                id: 3
-            },
-            {
-                label: 'Aommon Verbs',
-                number: 265,
-                id: 4
-            },
-            {
-                label: 'Wommon Verbs',
-                number: 265,
-                id: 5
-            },
-            {
-                label: 'Rommon Verbs',
-                number: 265,
-                id: 6
-            },
-            {
-                label: 'Tommon Verbs',
-                number: 265,
-                id: 7
-            }
-        ])
-        addNewCardsBox();
-        addFlipItOption();
-    }, []);
-
-    useEffect(() => {
-        setFilteredOptions(card.filter(option =>
-            option.label.toLowerCase().includes((search || '').toLowerCase())
-        ));
-    }, [search, card]);
-
-    const handleFocus = (): void => {
-        setIsFocused(true);
-    };
-
-    const handleBlur = (): void => {
-        setIsFocused(false);
-    };
-
-    function onCompleteLeft(id: number | string) {
-        setFilteredOptions((currentItems) => {
-            return currentItems.filter((i) => i.id !== id);
-        });
-        setCard((currentItems) => {
-            return currentItems.filter((i) => i.id !== id);
-        });
-    }
-
-    function onCompleteRight(id: number | string) {
-        handleChangeClick();
-    }
-
     return (
         <Fragment>
             <div className='position-relative' style={{ marginTop: '35px' }}>
@@ -368,11 +273,7 @@ const CardHomePage = () => {
                                 InputProps={{
                                     ...params.InputProps,
                                     startAdornment: (
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <circle cx="11.7666" cy="11.7666" r="8.98856" stroke="#133266" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                                            <path d="M18.0183 18.4851L21.5423 22" stroke="#133266" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                                        </svg>
-
+                                        <Image priority src={searchInput} alt="search" width={24} height={24} />
                                     ),
                                     sx: {
                                         animation: isFocused ? `${shakeLabel} 0.3s ease-in-out` : '',
@@ -381,28 +282,23 @@ const CardHomePage = () => {
                                 onFocus={handleFocus}
                                 onBlur={handleBlur}
                             />
-                            {
-                                search === undefined ? (
-                                    <Box
-                                        sx={{
-                                            position: 'absolute',
-                                            top: 16,
-                                            left: 40,
-                                            transform: isFocused ? 'translate(-30px, -40px)' : '',
-                                            padding: '0 5px',
-                                            pointerEvents: 'none',
-                                            transition: 'transform 0.3s ease-in-out',
-                                            fontSize: '15px',
-                                            color: '#133266'
-                                        }}
-                                    >
-                                        Search for a Cards Box
-                                    </Box>
-                                )
-                                    : (
-                                        <></>
-                                    )
-                            }
+                            {search === undefined && (
+                                <Box
+                                    sx={{
+                                        position: 'absolute',
+                                        top: 16,
+                                        left: 40,
+                                        transform: isFocused ? 'translate(-30px, -40px)' : '',
+                                        padding: '0 5px',
+                                        pointerEvents: 'none',
+                                        transition: 'transform 0.3s ease-in-out',
+                                        fontSize: '15px',
+                                        color: '#133266'
+                                    }}
+                                >
+                                    Search for a Cards Box
+                                </Box>
+                            )}
                         </div>
                     )}
                     options={filteredOptions}
@@ -410,93 +306,30 @@ const CardHomePage = () => {
                 />
             </div>
             <div className='scrollable-div' style={{ overflowY: 'scroll', height: `${height - 381}px` }}>
-                {
-                    filteredOptions.map((item, index) => {
-                        return <ListItem
-                            {...item}
-                            key={item.id}
-                            index={index}
-                            onCompleteLeft={onCompleteLeft}
-                            onCompleteRight={onCompleteRight} />
-                    })
-                }
+                {filteredOptions.map((item, index) => (
+                    <ListItem
+                        {...item}
+                        key={item.id}
+                        index={index}
+                        onCompleteLeft={onCompleteLeft}
+                        onCompleteRight={onCompleteRight}
+                    />
+                ))}
             </div>
-            {
-                openEffectCard ? (
-                    <Modal
-                        open={openEffectCard}
-                        onClose={handleChangeClick}
-                        aria-labelledby="modal-modal-title"
-                        aria-describedby="modal-modal-description"
-                    >
-                        <Box sx={EffectStyle}>
-                            <EffectiveCard data={top100Films} />
-                        </Box>
-                    </Modal>
-                ) : (
-                    null
-                )
-            }
-            {/* {
-                isNewCardOpen ? (
-                    <Modal
-                        open={isNewCardOpen}
-                        onClose={() => setIsNewCardOpen(false)}
-                        aria-labelledby="modal-modal-title"
-                        aria-describedby="modal-modal-description"
-                        sx={{ backgroundColor: 'rgb(0 0 0 / 45%)' }}
-                    >
-                        <Box component="form" onSubmit={handleAddNewCard} noValidate sx={NewCardStyle}>
-                            <TextField
-                                value={topic}
-                                id="topic"
-                                label="Topic"
-                                placeholder="Common Verbs"
-                                multiline
-                                margin="normal"
-                                fullWidth
-                                name="topic"
-                                autoFocus
-                                autoComplete="topic"
-                                variant="outlined"
-                                onChange={(e) => setTopic(e.target.value)}
-                                error={!!topicError}
-                                helperText={topicError}
-                                InputProps={{
-                                    sx: {
-                                        backgroundColor: '#f9f9f9',
-                                        borderRadius: '20px',
-                                    },
-                                }}
-                                FormHelperTextProps={{
-                                    sx: {
-                                        backgroundColor: 'transparent',
-                                        fontSize: '12pt'
-                                    },
-                                }}
-                                sx={{ border: 'none', "& fieldset": { border: '1px solid black', borderRadius: '20px' } }}
-                            />
-                            <Grid container className="mt-3">
-                                <Grid item xs textAlign="center">
-                                    <Button
-                                        type="submit"
-                                        variant="contained"
-                                        className="main-button"
-                                        style={{ width: '50%' }}
-                                    >
-                                        Confirm
-                                    </Button>
-                                </Grid>
-                            </Grid>
-
-                        </Box>
-                    </Modal>
-                ) : (
-                    null
-                )
-            } */}
+            {openEffectCard && (
+                <Modal
+                    open={openEffectCard}
+                    onClose={handleChangeClick}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                >
+                    <Box sx={EffectStyle}>
+                        <EffectiveCard data={top100Films} />
+                    </Box>
+                </Modal>
+            )}
         </Fragment>
     )
 }
 
-export default CardHomePage;
+export default CardHomePage;   
